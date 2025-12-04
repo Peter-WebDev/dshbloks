@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "../src/generated/prisma/client.js";
+import { PrismaClient, WidgetType } from "../src/generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const adapter = new PrismaPg({
@@ -9,43 +9,72 @@ const prisma = new PrismaClient({
   adapter,
 });
 
-const userData: Prisma.UserCreateInput[] = [
-  {
-    name: "Alice",
-    email: "alice@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Join the Prisma Discord",
-          content: "https://pris.ly/discord",
-          published: true,
-        },
-        {
-          title: "Prisma on YouTube",
-          content: "https://pris.ly/youtube",
-        },
-      ],
-    },
-  },
-  {
-    name: "Bob",
-    email: "bob@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Follow Prisma on Twitter",
-          content: "https://www.twitter.com/prisma",
-          published: true,
-        },
-      ],
-    },
-  },
-];
-
 export async function main() {
-  for (const u of userData) {
-    await prisma.user.create({ data: u });
-  }
+  console.log("Start seeding...");
+
+  // Skapa test-användare
+  const user = await prisma.user.create({
+    data: {
+      email: "johnny@example.com",
+      name: "Johnny Wishbone",
+      avatar: "avatar-1",
+    },
+  });
+
+  console.log("Created user:", user);
+
+  // Skapa default dashboard
+  const dashboard = await prisma.dashboard.create({
+    data: {
+      userId: user.id,
+      name: "Weather Dashboard",
+      isDefault: true,
+      widgets: {
+        create: [
+          {
+            type: WidgetType.weather,
+            title: "Borås",
+            config: {
+              location: "Borås",
+              unit: "celsius",
+            },
+            order: 0,
+          },
+          {
+            type: WidgetType.weather,
+            title: "Stockholm",
+            config: {
+              location: "Stockholm",
+              unit: "celsius",
+            },
+            order: 1,
+          },
+          {
+            type: WidgetType.clock,
+            title: "Stockholm",
+            config: {
+              timezone: "Europe/Stockholm",
+              format: "24h",
+            },
+            order: 2,
+          },
+        ],
+      },
+    },
+    include: {
+      widgets: true,
+    },
+  });
+
+  console.log("Created dashboard with widgets:", dashboard);
+  console.log("Seeding finished!");
 }
 
-main();
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
