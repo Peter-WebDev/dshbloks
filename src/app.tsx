@@ -20,7 +20,7 @@ export default function App() {
         <>
           <ColorModeScript storageType={storageManager.type} />
           <ColorModeProvider storageManager={storageManager}>
-          <Suspense>{props.children}</Suspense>
+            <Suspense>{props.children}</Suspense>
           </ColorModeProvider>
         </>
       )}
