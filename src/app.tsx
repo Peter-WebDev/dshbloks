@@ -1,9 +1,9 @@
+import { ColorModeProvider, ColorModeScript, cookieStorageManagerSSR } from "@kobalte/core";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
-import { isServer } from "solid-js/web"
-import { ColorModeProvider, ColorModeScript, cookieStorageManagerSSR } from "@kobalte/core"
-import { getCookie } from "vinxi/http"
+import { isServer } from "solid-js/web";
+import { getCookie } from "vinxi/http";
 import "./app.css";
 
 function getServerCookies() {
