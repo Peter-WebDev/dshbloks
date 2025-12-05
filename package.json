@@ -4,7 +4,10 @@
   "scripts": {
     "dev": "vinxi dev --host",
     "build": "vinxi build",
-    "start": "vinxi start"
+    "start": "vinxi start",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "precommit": "npm run lint"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.8",
@@ -27,7 +30,8 @@
     "@types/pg": "^8.15.6",
     "prisma": "^7.1.0",
     "tailwindcss": "^4.1.17",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "typescript-eslint": "^8.48.1"
   },
   "engines": {
     "node": ">=22"
