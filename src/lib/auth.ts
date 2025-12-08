@@ -1,7 +1,7 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaClient } from "../generated/prisma/client";
 
 // Separat Prisma-instans för Better Auth
 const authPrisma = new PrismaClient({
@@ -16,5 +16,11 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
+    },
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 60 * 5, // 5 minutes
+      }
     },
 });
