@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "vinxi dev --host",
     "build": "vinxi build",
+    "prebuild": "prisma generate",
     "start": "vinxi start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
