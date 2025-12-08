@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev --host",
+    "postinstall": "prisma generate",
     "build": "vinxi build",
     "start": "vinxi start",
     "lint": "eslint .",
