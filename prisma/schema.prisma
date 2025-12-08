@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -7,68 +8,35 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id         String      @id @default(uuid()) @db.Uuid
-  email      String      @unique @db.VarChar(255)
-  name       String?     @db.VarChar(255)
-  avatar     String?     @db.VarChar(100)
-  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt  DateTime    @updatedAt @map("updated_at") @db.Timestamp(6)
-  
-  dashboards Dashboard[]
-  sessions   Session[]
-
-  @@index([email])
-  @@map("users")
-}
-
 model Dashboard {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  name      String   @default("My Dashboard") @db.VarChar(255)
-  isDefault Boolean  @default(false) @map("is_default")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
-  
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  widgets Widget[]
+  id        String    @id @default(cuid())
+  userId    String
+  name      String    @default("My Dashboard")
+  isDefault Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  widgets   Widget[]
 
   @@index([userId])
-  @@index([userId, isDefault])
   @@map("dashboards")
 }
 
 model Widget {
-  id          String     @id @default(uuid()) @db.Uuid
-  dashboardId String     @map("dashboard_id") @db.Uuid
-  type        WidgetType @map("widget_type")
-  title       String?    @db.VarChar(255)
-  config      Json       @default("{}") @db.JsonB
-  order       Int        @db.Integer
-  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamp(6)
-  
-  dashboard Dashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+  id          String      @id @default(cuid())
+  dashboardId String
+  type        WidgetType
+  title       String?
+  config      Json        @default("{}")
+  order       Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  dashboard   Dashboard   @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
 
   @@unique([dashboardId, order])
   @@index([dashboardId])
-  @@index([dashboardId, order])
   @@map("widgets")
-}
-
-model Session {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  token     String   @unique @db.Text
-  expiresAt DateTime @map("expires_at") @db.Timestamp(6)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([token])
-  @@index([expiresAt])
-  @@map("sessions")
 }
 
 enum WidgetType {
@@ -78,6 +46,68 @@ enum WidgetType {
   quote
   notes
   color_generator
+}
 
-  @@map("widget_type")
+model User {
+  id            String      @id @default(cuid())
+  name          String
+  email         String
+  emailVerified Boolean     @default(false)
+  image         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  dashboards    Dashboard[]
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

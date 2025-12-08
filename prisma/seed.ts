@@ -1,5 +1,5 @@
-import { PrismaClient, WidgetType } from "../src/generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient, WidgetType } from "../src/generated/prisma/client.js";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -17,7 +17,8 @@ export async function main() {
     data: {
       email: "johnny@example.com",
       name: "Johnny Wishbone",
-      avatar: "avatar-1",
+      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=johnny",
+      emailVerified: true,
     },
   });
 
