@@ -1,32 +1,34 @@
 import * as z from "zod";
 
 export const signInSchema = z.object({
-  email: z.email({ pattern: z.regexes.html5Email }),
-  password: z.string().min(1, "Password is required"),
+  email: z.email,
+  password: z.string().min(8, { error: "Password is required" }),
 });
 
 export const signUpSchema = z.object({
-    name: z.string().min(1, "Name is required").min(3, "Name must be at least 3 characters long"),
-    email: z.email({ pattern: z.regexes.html5Email }),
-    password: z.string().min(8, "Password must be at least 8 characters long"),
+  name: z.string()
+    .min(1, { error: "Name is required" })
+    .min(2, { error: "Name must be at least 2 characters long" }),
+  email: z.email(),
+  password: z.string().min(8, { error: "Password must be at least 8 characters long" }),
 });
 
 export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string().min(8, "Password must be at least 8 characters long"),
-  confirmPassword: z.string().min(1, "Please confirm password")
+  currentPassword: z.string().min(8, { error: "Current password is required" }),
+  newPassword: z.string().min(8, { error: "Password must be at least 8 characters long" }),
+  confirmPassword: z.string().min(1, { error: "Please confirm password" })
 }).refine((data) => data.newPassword === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"]
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.email({ pattern: z.regexes.html5Email }),
+  email: z.email(),
 });
 
 export const resetPasswordSchema = z.object({
-  password: z.string().min(8, "Password must be at least 8 characters long"),
-  confirmPassword: z.string().min(1, "Please confirm password")
+  password: z.string().min(8, { error: "Password must be at least 8 characters long" }),
+  confirmPassword: z.string().min(1, { error: "Please confirm password" })
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"]
