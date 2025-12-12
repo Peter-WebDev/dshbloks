@@ -1,10 +1,20 @@
 import { A } from "@solidjs/router";
-import { Show } from "solid-js";
+import { onMount, Show } from "solid-js";
 import { Button } from "~/components/ui/button";
+import { showToast } from "~/components/ui/toast";
 import { signOut, useSession } from "~/lib/auth-client";
 
 export default function Home() {
   const session = useSession();
+
+  onMount(() => {
+    const pendingToast = sessionStorage.getItem("pendingToast");
+    if (pendingToast) {
+      const toastData = JSON.parse(pendingToast);
+      showToast(toastData);
+      sessionStorage.removeItem("pendingToast");
+    }
+  });
 
   return (
     <main class="max-w-7xl mx-auto text-center px-8">
@@ -17,7 +27,7 @@ export default function Home() {
               <p>Please sign in to continue</p>
               <div class="flex flex-col items-center gap-4 pt-8">
                 <Button>Just a button</Button>
-                <A href="/login">
+                <A href="/sign-in">
                   Sign In
                 </A>
               </div>

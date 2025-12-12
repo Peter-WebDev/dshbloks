@@ -1,10 +1,10 @@
-import js from "@eslint/js";
-import tseslint from "typescript-eslint";
+import eslint from "@eslint/js";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default [
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
+  eslint.configs.recommended,
+  tseslint.configs.recommended,
   {
     languageOptions: {
       globals: {
