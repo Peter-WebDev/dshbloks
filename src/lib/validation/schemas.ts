@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const signInSchema = z.object({
-  email: z.email,
+  email: z.email({ error: "A valid email is required" }),
   password: z.string().min(8, { error: "Password is required" }),
 });
 
@@ -9,7 +9,7 @@ export const signUpSchema = z.object({
   name: z.string()
     .min(1, { error: "Name is required" })
     .min(2, { error: "Name must be at least 2 characters long" }),
-  email: z.email(),
+  email: z.email("A valid email is required"),
   password: z.string().min(8, { error: "Password must be at least 8 characters long" }),
 });
 
@@ -23,7 +23,7 @@ export const changePasswordSchema = z.object({
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.email(),
+  email: z.email("A valid email is required"),
 });
 
 export const resetPasswordSchema = z.object({
