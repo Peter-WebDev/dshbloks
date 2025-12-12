@@ -5,6 +5,7 @@ import { Suspense } from "solid-js";
 import { isServer } from "solid-js/web";
 import { getCookie } from "vinxi/http";
 import "./app.css";
+import { Toaster } from "./components/ui/toast";
 
 function getServerCookies() {
   "use server"
@@ -21,6 +22,7 @@ export default function App() {
           <ColorModeScript storageType={storageManager.type} />
           <ColorModeProvider storageManager={storageManager}>
             <Suspense>{props.children}</Suspense>
+            <Toaster />
           </ColorModeProvider>
         </>
       )}
