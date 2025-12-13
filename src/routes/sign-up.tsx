@@ -1,10 +1,10 @@
 import { A, useNavigate } from "@solidjs/router";
-import SignInForm from "~/components/auth/sign-in-form";
+import SignUpForm from "~/components/auth/sign-up-form";
 import { Button } from "~/components/ui/button";
 import { Card, CardHeader } from "~/components/ui/card";
 import { Grid } from "~/components/ui/grid";
 
-export default function SignIn() {
+export default function SignUp() {
     const navigate = useNavigate();
 
     const goBackOrHome = () => {
@@ -34,7 +34,7 @@ export default function SignIn() {
                         </div>
                     </CardHeader>
                 </Card>
-                <SignInForm />
+                <SignUpForm />
             </Grid>
         </main>
     );

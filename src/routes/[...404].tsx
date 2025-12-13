@@ -5,8 +5,8 @@ export default function NotFound() {
     <main class="flex flex-col items-center justify-center min-h-svh text-center mx-auto p-4">
       <img src="/apple-touch-icon.png" alt="" />
       <h1>Not Found</h1>
-      <p class="text-sm">The page you are looking for does not exist.</p>
-      <A href="/" class="text-sky-600 hover:underline">
+      <p class="text-sm">The page you are looking for seems to have dashed away.</p>
+      <A href="/">
         Home
       </A>
     </main>

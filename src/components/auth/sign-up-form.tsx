@@ -1,17 +1,18 @@
 import { Separator } from "@kobalte/core/separator";
 import { useNavigate } from "@solidjs/router";
-import { signIn } from "~/lib/auth-client";
-import { signInSchema } from "~/lib/validation/schemas";
+import { signUp } from "~/lib/auth-client";
+import { signUpSchema } from "~/lib/validation/schemas";
 import { useZodValidation } from "../../lib/form/use-form-zod";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "../ui/card";
-import { TextField, TextFieldErrorMessage, TextFieldInput, TextFieldLabel } from "../ui/text-field";
+import { TextField, TextFieldDescription, TextFieldErrorMessage, TextFieldInput, TextFieldLabel } from "../ui/text-field";
 import { showToast } from "../ui/toast";
 
-export default function SignInForm() {
-    const { validateForm, getFieldState } = useZodValidation(signInSchema);
+export default function SignUpForm() {
+    const { validateForm, getFieldState } = useZodValidation(signUpSchema);
     const navigate = useNavigate();
 
+    const nameField = getFieldState("name");
     const emailField = getFieldState("email");
     const passwordField = getFieldState("password");
 
@@ -31,7 +32,8 @@ export default function SignInForm() {
             return;
         }
 
-        const { data, error } = await signIn.email({
+        const { data, error } = await signUp.email({
+            name: result.data.name,
             email: result.data.email,
             password: result.data.password,
         });
@@ -47,8 +49,8 @@ export default function SignInForm() {
             return;
         }
         sessionStorage.setItem("pendingToast", JSON.stringify({
-            title: "Welcome in!",
-            description: "You have successfully signed in.",
+            title: "Welcome to Dshbloks!",
+            description: "You have successfully signed up.",
             variant: "success",
         }));
 
@@ -58,11 +60,27 @@ export default function SignInForm() {
     return (
         <Card class="w-full max-w-md px-6 mx-auto">
             <CardHeader class="space-y-1">
-                <h1>Sign In</h1>
-                <CardDescription>Enter your details below to sign in to your account and manage your dashboards.</CardDescription>
+                <h1>Sign Up</h1>
+                <CardDescription>Enter your details below to sign up and manage your dashboards.</CardDescription>
             </CardHeader>
             <CardContent class="grid gap-4">
                 <form onSubmit={handleSubmit} novalidate class="space-y-6">
+                    <TextField class="grid w-full max-w-sm items-center gap-1.5"
+                        validationState={nameField.hasError() ? "invalid" : "valid"}
+                        value={nameField.value()}
+                        onChange={nameField.onChange}
+                    >
+                        <TextFieldLabel for="name">Name</TextFieldLabel>
+                        <TextFieldInput
+                            id="name"
+                            name="name"
+                            type="text"
+                            required
+                            onBlur={nameField.onBlur}
+                        />
+                        <TextFieldErrorMessage>{nameField.error()}</TextFieldErrorMessage>
+                    </TextField>
+
                     <TextField class="grid w-full max-w-sm items-center gap-1.5"
                         validationState={emailField.hasError() ? "invalid" : "valid"}
                         value={emailField.value()}
@@ -76,6 +94,7 @@ export default function SignInForm() {
                             required
                             onBlur={emailField.onBlur}
                         />
+                        <TextFieldDescription></TextFieldDescription>
                         <TextFieldErrorMessage>{emailField.error()}</TextFieldErrorMessage>
                     </TextField>
 
@@ -94,14 +113,14 @@ export default function SignInForm() {
                         />
                         <TextFieldErrorMessage>{passwordField.error()}</TextFieldErrorMessage>
                     </TextField>
-                    <Button type="submit" class="w-full">Sign In</Button>
-                    <p class="text-sm text-muted-foreground text-center">No account yet? <a href="/sign-up">Sign up</a></p>
+                    <Button type="submit" class="w-full">Sign Up</Button>
+                    <p class="text-sm text-muted-foreground text-center">Already have an account? <a href="/sign-in">Sign in</a></p>
                 </form>
             </CardContent>
-            <CardFooter class="grid">
+            <CardFooter class="grid gap-4">
                 <div class="flex gap-3">
                     <Separator class="grow mt-2.5" />
-                    <p class="text-type-xs uppercase">Or sign in with</p>
+                    <p class="text-type-xs uppercase">Or sign up with</p>
                     <Separator class="grow mt-2.5" />
                 </div>
                 <Button as="button" variant="secondary" class="w-full">
