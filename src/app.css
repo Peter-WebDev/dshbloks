@@ -60,8 +60,8 @@
   --color-popover: oklch(9% 0.002 285.75);
   --color-popover-foreground: oklch(98% 0 0);
   
-  --color-border: oklch(14.5% 0.002 285.75);
-  --color-input: oklch(14.5% 0.002 285.75);
+  --color-border: oklch(20.5% 0.002 285.75);
+  --color-input: oklch(20.5% 0.002 285.75);
   
   --color-card: oklch(9% 0.002 285.75);
   --color-card-foreground: oklch(98% 0 0);
