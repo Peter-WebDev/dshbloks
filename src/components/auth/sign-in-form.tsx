@@ -95,14 +95,18 @@ export default function SignInForm() {
                         <TextFieldErrorMessage>{passwordField.error()}</TextFieldErrorMessage>
                     </TextField>
                     <Button type="submit" class="w-full">Sign In</Button>
-                    <Button as="button" variant="secondary" class="w-full">
-                        <img height="24" width="24" src="https://cdn.simpleicons.org/github/black/white" />Github
-                    </Button>
+                    <p class="text-sm text-muted-foreground text-center">No account yet? <a href="/sign-up">Sign up</a></p>
                 </form>
             </CardContent>
-            <CardFooter class="grid gap-4">
-                <Separator />
-                <p class="text-sm text-muted-foreground text-center">No account yet? <a href="/sign-up">Sign up</a></p>
+            <CardFooter class="grid">
+                <div class="flex gap-3">
+                    <Separator class="grow mt-2.5" />
+                    <p class="text-type-xs uppercase">Or sign in with</p>
+                    <Separator class="grow mt-2.5" />
+                </div>
+                <Button as="button" variant="secondary" class="w-full">
+                    <img height="24" width="24" src="https://cdn.simpleicons.org/github/black/white" />Github
+                </Button>
             </CardFooter>
         </Card>
     );
