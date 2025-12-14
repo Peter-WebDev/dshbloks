@@ -12,6 +12,10 @@ const authPrisma = new PrismaClient({
   }),
 });
 
+const trustedOrigins = process.env.AUTH_TRUSTED_ORIGINS
+  ? process.env.AUTH_TRUSTED_ORIGINS.split(",").map((origin) => origin.trim())
+  : ["http://localhost:3000"]; // Fallback om env saknas
+
 export const auth = betterAuth({
   database: prismaAdapter(authPrisma, {
         provider: "postgresql",
@@ -45,4 +49,5 @@ export const auth = betterAuth({
           maxAge: 60 * 5, // 5 minutes 
       },
     },
-  });
+    trustedOrigins: trustedOrigins
+    });
