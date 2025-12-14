@@ -52,7 +52,7 @@ export default function SignInForm() {
             variant: "success",
         }));
 
-        navigate("/");
+        navigate("/", { replace: true });
     };
 
     return (

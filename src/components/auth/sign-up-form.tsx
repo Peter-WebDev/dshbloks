@@ -54,7 +54,7 @@ export default function SignUpForm() {
             variant: "success",
         }));
 
-        navigate("/");
+        navigate("/", { replace: true });
     };
 
     return (
