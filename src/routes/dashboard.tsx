@@ -1,24 +1,41 @@
-import { Show } from "solid-js";
-import { useSession } from "~/lib/auth-client";
+import { A, useNavigate } from "@solidjs/router";
+import DashboardDetails from "~/components/auth/dashboard-details";
+import { Button } from "~/components/ui/button";
+import { Card, CardHeader } from "~/components/ui/card";
+import { Grid } from "~/components/ui/grid";
 
 export default function Dashboard() {
-    const session = useSession();
+    const navigate = useNavigate();
+
+    const goBackOrHome = () => {
+        navigate("/");
+    };
 
     return (
-        <main class="min-h-screen p-6">
-            <h1>Dashboard</h1>
-            <p>
-                Welcome, <strong>
-                    <Show when={!session().isPending} fallback="loading...">
-                        {session().data?.user.name}
-                    </Show>
-                </strong>
-            </p>
-            <p>
-                Email: <Show when={!session().isPending} fallback="loading...">
-                    {session().data?.user.email}
-                </Show>
-            </p>
+        <main class="relative min-h-svh flex md:items-center md:justify-center">
+            <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                class="absolute right-4 top-4"
+                aria-label="Close"
+                onClick={goBackOrHome}
+            >
+                ×
+            </Button>
+            <Grid cols={1} colsMd={2} class="w-full grid md:place-items-center gap-6">
+                <Card class="md:min-h-svh w-full bg-accent">
+                    <CardHeader class="w-min">
+                        <div class="flex items-center gap-2">
+                            <img src="/favicon-16x16.png" alt="" />
+                            <A href="/">
+                                Dshbloks
+                            </A>
+                        </div>
+                    </CardHeader>
+                </Card>
+                <DashboardDetails />
+            </Grid>
         </main>
     );
 }
