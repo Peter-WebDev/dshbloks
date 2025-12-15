@@ -23,10 +23,10 @@ export default function Home() {
           <p>Loading...</p>
         </Show>
         <Show when={!session().isPending && !session().data?.user}>
-          <div class="space-y-4">
+          <div class="flex flex-col justify-center space-y-4">
             <h1>Welcome to Dshbloks</h1>
             <p>Please sign in to continue</p>
-            <div class="flex flex-col items-center gap-4 pt-8">
+            <div class="gap-4 pt-8">
               <A href="/sign-in">Sign In</A>
               <A href="/sign-up">Sign Up</A>
             </div>
@@ -36,6 +36,10 @@ export default function Home() {
           <div class="space-y-4">
             <h1 class="text-4xl font-bold">Welcome, {session().data?.user.name}!</h1>
             <p>Email: {session().data?.user.email}</p>
+            <div class="flex items-center gap-4 pt-8">
+              <A href="/account">Account</A>
+              <A href="/dashboard">Dashboard</A>
+            </div>
             <Button
               onClick={() => signOut()}
               variant="default"

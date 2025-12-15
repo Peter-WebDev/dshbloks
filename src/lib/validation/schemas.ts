@@ -16,10 +16,15 @@ export const signUpSchema = z.object({
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(8, { error: "Current password is required" }),
   newPassword: z.string().min(8, { error: "Password must be at least 8 characters long" }),
-  confirmPassword: z.string().min(1, { error: "Please confirm password" })
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"]
+  confirmPassword: z.string().min(1, { error: "Please confirm password" }),
+}).superRefine(({ newPassword, confirmPassword }, ctx) => {
+  if (newPassword !== confirmPassword) {
+    ctx.addIssue({
+      code:"custom",
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    });
+  }
 });
 
 export const forgotPasswordSchema = z.object({
