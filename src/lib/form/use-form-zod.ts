@@ -47,7 +47,12 @@ export function useZodValidation<T extends z.ZodObject<z.ZodRawShape>>(schema: T
       hasError,
       onChange,
       onBlur,
-      error: () => errors[fieldName as string]
+      error: () => errors[fieldName as string],
+      reset: () => {
+        setValue("");
+        setHasError(false);
+        setErrors(fieldName as string, undefined);
+      },
     };
   };
 
@@ -73,5 +78,9 @@ export function useZodValidation<T extends z.ZodObject<z.ZodRawShape>>(schema: T
     }
   };
 
-  return { errors, validateForm, getFieldState };
+  function resetForm() {
+    setErrors({});
+  }
+
+  return { errors, validateForm, getFieldState, resetForm };
 }
