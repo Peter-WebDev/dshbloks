@@ -9,47 +9,48 @@ interface FormErrors {
 export function useZodValidation<T extends z.ZodObject<z.ZodRawShape>>(schema: T) {
   type SchemaData = z.infer<T>;
   const [errors, setErrors] = createStore<FormErrors>({});
+  const [values, setValues] = createStore<Record<string, string>>({});
 
-  // Helper för att skapa field state med validation
   const getFieldState = (fieldName: keyof SchemaData) => {
-    const [value, setValue] = createSignal("");
     const [hasError, setHasError] = createSignal(false);
 
-    const validateField = (inputValue: string) => {
+    const validateAll = (newValues: Record<string, string>) => {
       try {
-        const pickShape = { [fieldName]: true } as Record<keyof SchemaData, true>;
-        const fieldSchema = schema.pick(pickShape);
-        fieldSchema.parse({ [fieldName]: inputValue });
-        
+        schema.parse(newValues);
         // Validering lyckades
+        setErrors({});
         setHasError(false);
-        setErrors(fieldName as string, undefined);
       } catch (err) {
         // Validering misslyckades
         if (err instanceof ZodError) {
-          setHasError(true);
-          setErrors(fieldName as string, err.issues[0]?.message || "Validation error");
+          const newErrors: FormErrors = {};
+          err.issues.forEach((error) => {
+            const field = error.path[0] as string;
+            if (field) newErrors[field] = error.message;
+          });
+          setErrors(newErrors);
+          setHasError(!!newErrors[fieldName as string]);
         }
       }
     };
 
     const onChange = (inputValue: string) => {
-      setValue(inputValue);
-      validateField(inputValue);
+      setValues({ ...values, [fieldName]: inputValue });
+      validateAll({ ...values, [fieldName]: inputValue });
     };
 
     const onBlur = () => {
-      validateField(value());
+      validateAll(values);
     };
 
     return {
-      value,
+      value: () => values[fieldName as string] ?? "",
       hasError,
       onChange,
       onBlur,
       error: () => errors[fieldName as string],
       reset: () => {
-        setValue("");
+        setValues({ ...values, [fieldName]: "" });
         setHasError(false);
         setErrors(fieldName as string, undefined);
       },
@@ -80,6 +81,7 @@ export function useZodValidation<T extends z.ZodObject<z.ZodRawShape>>(schema: T
 
   function resetForm() {
     setErrors({});
+    setValues({});
   }
 
   return { errors, validateForm, getFieldState, resetForm };
