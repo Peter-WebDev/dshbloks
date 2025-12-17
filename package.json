@@ -11,6 +11,7 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
+    "@corvu/drawer": "^0.2.4",
     "@fontsource-variable/geist": "^5.2.8",
     "@kobalte/core": "^0.13.11",
     "@prisma/adapter-pg": "^7.1.0",
