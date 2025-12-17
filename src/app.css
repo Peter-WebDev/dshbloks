@@ -44,6 +44,15 @@
   --color-ring: oklch(9% 0.002 285.75);
   
   --radius: 0.5rem;
+
+  --sidebar-background: var(--color-card);
+  --sidebar-foreground: var(--color-card-foreground);
+  --sidebar-primary:var(--color-primary);
+  --sidebar-primary-foreground: var(--color-primary-foreground);
+  --sidebar-accent: var(--color-accent);
+  --sidebar-accent-foreground: var(--color-accent-foreground);
+  --sidebar-border: var(--color-border);
+  --sidebar-ring: var(--color-ring);
 }
 
 .dark,
@@ -82,6 +91,15 @@
   --color-warning-foreground: oklch(10.09% 0.02 285.75);
   
   --color-ring: oklch(85.42% 0.018 285.75);
+
+  --sidebar-background: var(--color-card);
+  --sidebar-foreground: var(--color-card-foreground);
+  --sidebar-primary: var(--color-primary);
+  --sidebar-primary-foreground: var(--color-primary-foreground);
+  --sidebar-accent: var(--color-accent);
+  --sidebar-accent-foreground: var(--color-accent-foreground);
+  --sidebar-border: var(--color-border);
+  --sidebar-ring: var(--color-ring);
 }
 
 * {
