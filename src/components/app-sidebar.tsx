@@ -1,17 +1,35 @@
+import { createDraggable } from "@thisbeyond/solid-dnd";
 import { For, type ComponentProps } from "solid-js";
+import { WIDGET_TEMPLATES, type WidgetTemplate } from "~/lib/types";
 import Dropdown from "./app-menu";
-import { Card } from "./ui/card";
 import { Grid } from "./ui/grid";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "./ui/sidebar";
 
-const widgets = [
-    { id: 1, content: "1" },
-    { id: 2, content: "2" },
-    { id: 3, content: "3" },
-    { id: 4, content: "4" },
-    { id: 5, content: "5" },
-    { id: 6, content: "6" }
-];
+declare module "solid-js" {
+    namespace JSX {
+        interface Directives {
+            draggable: boolean;
+            droppable: boolean;
+        }
+    }
+}
+
+const TemplateItem = (props: { template: WidgetTemplate }) => {
+    const draggable = createDraggable(`template:${props.template.id}`);
+    return (
+        <div
+            class="w-full h-full bg-secondary cursor-grab"
+            use:draggable
+            classList={{ "opacity-25": draggable.isActiveDraggable }}>
+            <div class="w-full p-4 rounded-lg shadow-lg flex flex-col items-center gap-2">
+                <div class="text-4xl mb-2">{props.template.icon}</div>
+                <div class="flex-1 text-center space-y-1">
+                    <div class="font-medium">{props.template.name}</div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
@@ -21,13 +39,14 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                 <Dropdown />
             </SidebarHeader>
             <SidebarContent>
+                <div class="mb-4">
+                    <h4 class="text-sm font-semibold">Add widgets</h4>
+                    <p class="text-xs text-muted-foreground">Drag a widget into the dashboard slots</p>
+                </div>
                 <Grid cols={2} class="gap-4">
-                    <For each={widgets}>{(widget) => (
-                        <Card class="w-full h-full bg-secondary">
-                            <div class="w-full h-16 bg-secondary flex items-center justify-center">{widget.content}</div>
-                        </Card>
-                    )}
-                    </For>
+                    <For each={WIDGET_TEMPLATES}>{(template) => (
+                        <TemplateItem template={template} />
+                    )}</For>
                 </Grid>
             </SidebarContent>
             <SidebarFooter>
