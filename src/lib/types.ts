@@ -36,8 +36,31 @@ export interface NotesConfig {
   fontSize: "small" | "medium" | "large";
 }
 
-export const WIDGET_TEMPLATES = [
-  { type: "clock", label: "Klocka", icon: "🕐", description: "Visa tid" },
-  { type: "notes", label: "Anteckningar", icon: "📝", description: "Redigera text" },
-  // ... andra widgets
+export type WidgetTemplate = {
+    id: string;
+    type?: string;
+    name?: string;
+    description?: string;
+    defaultConfig: Record<string, any>;
+    icon?: string;
+};
+
+export const WIDGET_TEMPLATES: WidgetTemplate[] = [
+    {
+        id: "clock",
+        type: "clock",
+        name: "Clock",
+        description: "Displays the current time",
+        defaultConfig: { timezone: "Europe/Stockholm", format24h: true },
+        icon: "🕐",
+    },
+    {
+        id: "notes",
+        type: "notes",
+        name: "Notes",
+        description: "A simple note-taking widget",
+        defaultConfig: { content: "" },
+        icon: "📝",
+    },
+    // Add more widget templates as needed
 ] as const;

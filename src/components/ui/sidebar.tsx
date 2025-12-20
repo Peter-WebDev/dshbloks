@@ -314,10 +314,10 @@ const SidebarRail: Component<ComponentProps<"button">> = (props) => {
   )
 }
 
-const SidebarInset: Component<ComponentProps<"main">> = (props) => {
+const SidebarInset: Component<ComponentProps<"section">> = (props) => {
   const [local, others] = splitProps(props, ["class"])
   return (
-    <main
+    <section
       class={cn(
         "relative flex min-h-svh flex-1 flex-col bg-background",
         "peer-data-[variant=inset]:min-h-[calc(100svh-(--spacing(4)))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
@@ -689,3 +689,4 @@ export {
   SidebarTrigger,
   useSidebar
 }
+

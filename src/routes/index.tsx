@@ -1,17 +1,18 @@
 import {
-  createDraggable,
   createDroppable,
   DragDropProvider,
   DragDropSensors,
   DragOverlay,
+  useDragDropContext
 } from "@thisbeyond/solid-dnd";
-import { createEffect, createSignal, onMount, Show } from "solid-js";
+import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import AppDrawer from "~/components/app-drawer";
 import Dropdown from "~/components/app-menu";
 import { AppSidebar } from "~/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useIsMobile, useSidebar } from "~/components/ui/sidebar";
 import { showToast } from "~/components/ui/toast";
 import { useApp } from "~/lib/store";
+import { WIDGET_TEMPLATES } from "~/lib/types";
 
 declare module "solid-js" {
   namespace JSX {
@@ -22,11 +23,6 @@ declare module "solid-js" {
   }
 };
 
-// Typa props för Droppable
-interface DroppableProps {
-  children: any;
-}
-
 const SidebarSync = () => {
   const { open } = useSidebar();
   const { setSidebarOpen } = useApp();
@@ -35,71 +31,63 @@ const SidebarSync = () => {
 };
 
 
-// Enkel draggable komponent (från ditt exempel)
-const Draggable = () => {
-  const draggable = createDraggable(1);
-  return (
-    <div
-      use:draggable
-      class="draggable cursor-grab bg-blue-200 p-4 m-2 rounded border"
-      classList={{ "opacity-25": draggable.isActiveDraggable }}
-    >
-      Draggable
-    </div>
-  );
-};
+// Slot komponent som är droppable
+const Slot = (props: { id: string; content?: string }) => {
+  const droppable = createDroppable(props.id);
 
-// Enkel droppable komponent (från ditt exempel)
-const Droppable = (props: DroppableProps) => {
-  const droppable = createDroppable(1);
   return (
     <div
       use:droppable
-      class="droppable bg-gray-200 p-4 m-2 rounded border min-h-32"
-      classList={{ "!droppable-accept": droppable.isActiveDroppable }}
+      class="droppable bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-6 min-h-[200px] flex items-center justify-center transition-colors"
+      classList={{
+        "!border-green-500 !bg-green-50": droppable.isActiveDroppable
+      }}
     >
-      Droppable. {props.children}
+      {props.content ? (
+        <div class="text-center">
+          <div class="text-4xl mb-2 text-primary-foreground">{props.content}</div>
+          <div class="text-sm text-gray-600">Slot {props.id}</div>
+        </div>
+      ) : (
+        <div class="text-gray-400 text-center">
+          <div class="text-2xl mb-2">📦</div>
+          <div class="text-sm">Drop widget here</div>
+          <div class="text-xs">Slot {props.id}</div>
+        </div>
+      )}
     </div>
-  );
-};
-
-// DragOverlayExample komponent (direkt från ditt exempel)
-const DragOverlayExample = () => {
-  const [where, setWhere] = createSignal("outside");
-
-  const onDragEnd = (event: any) => {
-    const droppable = event?.droppable;
-    if (droppable) {
-      setWhere("inside");
-    } else {
-      setWhere("outside");
-    }
-  };
-
-  return (
-    <DragDropProvider onDragEnd={onDragEnd}>
-      <DragDropSensors />
-      <div class="p-8 min-h-15">
-        <h2>Simple Drag and Drop Test</h2>
-        <Show when={where() === "outside"}>
-          <Draggable />
-        </Show>
-        <Droppable>
-          <Show when={where() === "inside"}>
-            <Draggable />
-          </Show>
-        </Droppable>
-        <DragOverlay>
-          <div class="draggable bg-red-200 p-2 rounded">Drag Overlay!</div>
-        </DragOverlay>
-      </div>
-    </DragDropProvider>
   );
 };
 
 export default function Home() {
   const isMobile = useIsMobile();
   const { slots } = useApp();
+
+  // State för att hålla koll på vad som finns i varje slot
+  const [slotContents, setSlotContents] = createSignal<Record<string, string>>({});
+
+  const onDragEnd = (event: any) => {
+    const draggedId = event.draggable?.id; // t.ex. "template:clock"
+    const droppableId = event.droppable?.id; // t.ex. "slot-1"
+
+    if (draggedId && droppableId) {
+      console.log(`Dropped ${draggedId} into ${droppableId}`);
+
+      // Extrahera template info från ID
+      const templateId = draggedId.replace("template:", "");
+
+      // Uppdatera slot content
+      setSlotContents(prev => ({
+        ...prev,
+        [droppableId]: templateId
+      }));
+
+      showToast({
+        title: "Widget added!",
+        description: `Added ${templateId} to ${droppableId}`,
+      });
+    }
+  };
 
   onMount(() => {
     console.log("Current slots:", slots());
@@ -112,29 +100,69 @@ export default function Home() {
   });
 
   return (
-    <main class="mx-auto px-8">
-      <SidebarProvider>
-        <SidebarSync />
-        <AppSidebar />
-        <SidebarInset>
-          <header class="flex justify-between shrink-0 items-start border-b py-4 sticky top-0 bg-background z-10">
-            <Show when={!isMobile()}>
-              <SidebarTrigger class="-ml-1" type="button" variant="default" size="icon" />
-            </Show>
-            <Show when={isMobile()}>
-              <div class="flex items-center gap-2">
-                <AppDrawer />
-                <Dropdown />
+    <main class="mx-auto px-4">
+      <DragDropProvider onDragEnd={onDragEnd}>
+        <DragDropSensors />
+        <SidebarProvider>
+          <SidebarSync />
+          <AppSidebar />
+          <SidebarInset>
+            <header class="flex justify-between shrink-0 items-start border-b py-4 bg-background sticky top-0 z-10">
+              <Show when={!isMobile()}>
+                <SidebarTrigger class="-ml-1" type="button" variant="default" size="icon" />
+              </Show>
+              <Show when={isMobile()}>
+                <div class="flex items-center gap-2">
+                  <AppDrawer />
+                  <Dropdown />
+                </div>
+              </Show>
+              <div class="flex flex-col items-end">
+                <h1>Dshbloks</h1>
+                <span>Information in a dash</span>
               </div>
-            </Show>
-            <div class="flex flex-col items-end">
-              <h1>Dshbloks</h1>
-              <span>Information in a dash</span>
+            </header>
+            {/* Slots grid */}
+            <div>
+              <h2>Dashboard Slots</h2>
+              <p>Current dashboard:</p>
+              <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                <For each={[0, 1, 2, 3, 4, 5]}>
+                  {(index) => (
+                    <Slot
+                      id={`slot-${index}`}
+                      content={slotContents()[`slot-${index}`]}
+                    />
+                  )}
+                </For>
+              </div>
             </div>
-          </header>
-          <DragOverlayExample />
-        </SidebarInset>
-      </SidebarProvider>
+
+            <DragOverlay>
+              {(() => {
+                const context = useDragDropContext();
+                if (!context) return null;
+
+                const [state] = context;
+                const activeId = state?.active?.draggable?.id;
+                if (!activeId) return null;
+
+                const templateId = activeId.toString().replace("template:", "");
+                const template = WIDGET_TEMPLATES.find(t => t.id === templateId);
+                if (!template) return null;
+
+                return (template ? (
+                  <div class="draggable bg-primary text-primary-foreground p-4 rounded-lg shadow-lg flex flex-col items-center">
+                    <div class="text-4xl mb-2">{template.icon}</div>
+                    <div class="font-medium">{template.name || "Dragging..."}</div>
+                  </div>
+                ) : null);
+
+              })()}
+            </DragOverlay>
+          </SidebarInset>
+        </SidebarProvider>
+      </DragDropProvider>
     </main>
   );
 }
