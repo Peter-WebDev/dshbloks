@@ -1,6 +1,5 @@
 import { useDashboardStore } from "./dashboard";
 
-// Kombinera stores
 export const useApp = () => {
     const {
         state,
@@ -11,16 +10,17 @@ export const useApp = () => {
         removeWidgetFromSlot,
         reorderSlots,
         loadDashboard,
-        setSidebarOpen
+        setSidebarOpen,
+        takeSnapshot,
+        clearSnapshot
     } = useDashboardStore();
 
     return {
-        // Dashboard state
         currentDashboard: () => state.currentDashboard,
         slots: () => state.currentDashboard?.slots || [],
-        sidebarOpen: () => state.ui.sidebarOpen, // Sync with Sidebar-UI
+        sidebarOpen: () => state.ui.sidebarOpen,
+        snapshots: () => state.snapshots,
 
-        // Dashboard actions
         setCurrentDashboard,
         setSlotWidget,
         markWidgetAsSaved,
@@ -29,5 +29,7 @@ export const useApp = () => {
         reorderSlots,
         loadDashboard,
         setSidebarOpen,
+        takeSnapshot,
+        clearSnapshot
     };
 };
