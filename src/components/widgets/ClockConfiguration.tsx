@@ -20,7 +20,7 @@ const TIMEZONES = [
     { value: "Australia/Sydney", label: "Australia/Sydney" },
 ] as const;
 
-export default function ClockConfig(props: ClockConfigProps) {
+export default function ClockConfiguration(props: ClockConfigProps) {
     const [timezone, setTimezone] = createSignal(props.initialConfig.timezone);
     const [format24h, setFormat24h] = createSignal(props.initialConfig.format24h);
 
@@ -60,19 +60,21 @@ export default function ClockConfig(props: ClockConfigProps) {
                 </TextField>
 
                 <div class="w-full">
-                    <TextFieldLabel for="format">Time Format</TextFieldLabel>
-                    <RadioGroup
-                        value={format24h() ? "24" : "12"}
-                        onChange={handleFormatChange}
-                        class="flex gap-4 mt-2"
-                    >
-                        <RadioGroupItem value="24">
-                            <RadioGroupItemLabel>24-hour</RadioGroupItemLabel>
-                        </RadioGroupItem>
-                        <RadioGroupItem value="12">
-                            <RadioGroupItemLabel>12-hour</RadioGroupItemLabel>
-                        </RadioGroupItem>
-                    </RadioGroup>
+                    <TextField>
+                        <TextFieldLabel for="format">Time Format</TextFieldLabel>
+                        <RadioGroup
+                            value={format24h() ? "24" : "12"}
+                            onChange={handleFormatChange}
+                            class="flex gap-4 mt-2"
+                        >
+                            <RadioGroupItem value="24">
+                                <RadioGroupItemLabel>24-hour</RadioGroupItemLabel>
+                            </RadioGroupItem>
+                            <RadioGroupItem value="12">
+                                <RadioGroupItemLabel>12-hour</RadioGroupItemLabel>
+                            </RadioGroupItem>
+                        </RadioGroup>
+                    </TextField>
                 </div>
                 <div class="flex gap-2 pt-4">
                     <Button
