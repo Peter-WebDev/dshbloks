@@ -18,9 +18,10 @@ const TemplateItem = (props: { template: WidgetTemplate }) => {
     const draggable = createDraggable(`template:${props.template.id}`);
     return (
         <div
-            class="w-full h-full bg-secondary rounded-lg border-border border-2 cursor-grab"
+            class="w-full h-full bg-secondary rounded-lg border-border border-2 cursor-grab touch-none"
             use:draggable
-            classList={{ "opacity-25": draggable.isActiveDraggable }}>
+            classList={{ "opacity-25": draggable.isActiveDraggable }}
+        >
             <div class="p-4 flex flex-col items-center gap-2">
                 <div class="text-4xl mb-2">{props.template.icon}</div>
                 <div class="flex-1 text-center space-y-1">
