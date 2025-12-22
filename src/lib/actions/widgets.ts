@@ -43,3 +43,48 @@ export const createWidgetAction = action(async (input: CreateWidgetInput) => {
     };
   }
 });
+
+export const updateWidgetAction = action(async (input: UpdateWidgetInput) => {
+  'use server';
+
+  try {
+    const widget = await prisma.widget.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        config: input.config,
+        title: input.title,
+        updatedAt: new Date(),
+      },
+    });
+
+    return { success: true, widget };
+  } catch (error) {
+    console.error('Error updating widget:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update widget',
+    };
+  }
+});
+
+export const deleteWidgetAction = action(async (input: DeleteWidgetInput) => {
+  'use server';
+
+  try {
+    await prisma.widget.delete({
+      where: {
+        id: input.id,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting widget:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to delete widget',
+    };
+  }
+});
