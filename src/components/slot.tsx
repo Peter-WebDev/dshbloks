@@ -1,8 +1,17 @@
+import { useAction } from "@solidjs/router";
 import { createDroppable } from "@thisbeyond/solid-dnd";
 import { Match, Switch } from "solid-js";
+import { showToast } from "~/components/ui/toast";
 import ClockConfiguration from "~/components/widgets/ClockConfiguration";
 import ClockEdit from "~/components/widgets/ClockEdit";
 import ClockView from "~/components/widgets/ClockView";
+import {
+    createWidgetAction,
+    deleteWidgetAction,
+    updateWidgetAction,
+    type CreateWidgetInput,
+    type UpdateWidgetInput
+} from "~/lib/actions/widgets";
 import { useApp } from "~/lib/store";
 import type { ClockConfig, Slot as SlotType } from "~/lib/types";
 
@@ -29,6 +38,10 @@ const Slot = (props: SlotProps) => {
         snapshots
     } = useApp();
 
+    const createWidget = useAction(createWidgetAction);
+    const updateWidget = useAction(updateWidgetAction);
+    const deleteWidget = useAction(deleteWidgetAction);
+
     const isEmpty = () => !props.slot.widget;
     const isUnsaved = () => props.slot.widget && !props.slot.widget.saved;
     const isSaved = () => props.slot.widget && props.slot.widget.saved;
@@ -39,11 +52,76 @@ const Slot = (props: SlotProps) => {
     const handleClockSave = async (config: ClockConfig) => {
         if (!props.slot.widget) return;
 
-        setSlotWidget(props.slot.id, {
-            ...props.slot.widget,
-            config: config,
-            saved: true,
-        });
+        const isNewWidget = !props.slot.widget.id;
+
+        if (isNewWidget) {
+            // Create
+            const input: CreateWidgetInput = {
+                dashboardId: props.slot.widget.dashboardId,
+                type: props.slot.widget.type,
+                title: props.slot.widget.title,
+                config: config,
+                order: props.slot.widget.order,
+            };
+
+            const result = await createWidget(input);
+
+            if (result.success && result.widget) {
+                setSlotWidget(props.slot.id, {
+                    id: result.widget.id,
+                    type: result.widget.type,
+                    title: result.widget.title,
+                    config: result.widget.config,
+                    order: result.widget.order,
+                    dashboardId: result.widget.dashboardId,
+                    saved: true,
+                    createdAt: result.widget.createdAt,
+                    updatedAt: result.widget.updatedAt,
+                });
+
+                showToast({
+                    title: "Widget saved",
+                    description: "The widget has been saved.",
+                    variant: "success",
+                });
+            } else {
+                showToast({
+                    title: "Save failed",
+                    description: result.error || "Failed to save widget",
+                    variant: "destructive",
+                });
+            }
+        } else {
+            // Update existing widget
+            const input: UpdateWidgetInput = {
+                id: props.slot.widget.id,
+                config: config,
+                title: props.slot.widget.title,
+            };
+
+            const result = await updateWidget(input);
+
+            if (result.success) {
+                // Update store with new config
+                setSlotWidget(props.slot.id, {
+                    ...props.slot.widget,
+                    config: config,
+                    saved: true,
+                });
+
+                showToast({
+                    title: "Widget updated",
+                    description: "Your changes have been saved.",
+                    variant: "success",
+                });
+            } else {
+                showToast({
+                    title: "Update failed",
+                    description: result.error || "Failed to update widget",
+                    variant: "destructive",
+                });
+            }
+        }
 
         clearSnapshot(props.slot.id);
     };
