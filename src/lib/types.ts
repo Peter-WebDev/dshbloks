@@ -1,9 +1,9 @@
-import type { DashboardModel, WidgetModel } from "~/generated/prisma/models";
+import type { DashboardModel, WidgetModel } from '~/generated/prisma/models';
 
-export type BaseWidget = Pick<WidgetModel, "id" | "type" | "config" | "order">;
+export type BaseWidget = Pick<WidgetModel, 'id' | 'type' | 'config' | 'order'>;
 
 export interface WidgetInstance extends Omit<WidgetModel, 'config'> {
-  config: Record<string, any>;
+  config: Record<string, any> | any;
   saved?: boolean;
 }
 
@@ -17,7 +17,7 @@ export interface Dashboard extends Omit<DashboardModel, 'widgets'> {
 }
 
 export interface UIState {
-  sidebarOpen: boolean;  // True om sidebar är öppen (edit-mode), false för view-mode
+  sidebarOpen: boolean; // True om sidebar är öppen (edit-mode), false för view-mode
 }
 
 export interface AppState {
@@ -33,34 +33,34 @@ export interface ClockConfig {
 export interface NotesConfig {
   title: string;
   content: string;
-  fontSize: "small" | "medium" | "large";
+  fontSize: 'small' | 'medium' | 'large';
 }
 
 export type WidgetTemplate = {
-    id: string;
-    type?: string;
-    name?: string;
-    description?: string;
-    defaultConfig: Record<string, any>;
-    icon?: string;
+  id: string;
+  type?: string;
+  name?: string;
+  description?: string;
+  defaultConfig: Record<string, any>;
+  icon?: string;
 };
 
 export const WIDGET_TEMPLATES: WidgetTemplate[] = [
-    {
-        id: "clock",
-        type: "clock",
-        name: "Clock",
-        description: "Displays the current time",
-        defaultConfig: { timezone: "Europe/Stockholm", format24h: true },
-        icon: "🕐",
-    },
-    {
-        id: "notes",
-        type: "notes",
-        name: "Notes",
-        description: "A simple note-taking widget",
-        defaultConfig: { content: "" },
-        icon: "📝",
-    },
-    // Add more widget templates as needed
+  {
+    id: 'clock',
+    type: 'clock',
+    name: 'Clock',
+    description: 'Displays the current time',
+    defaultConfig: { timezone: 'Europe/Stockholm', format24h: true },
+    icon: '🕐',
+  },
+  {
+    id: 'notes',
+    type: 'notes',
+    name: 'Notes',
+    description: 'A simple note-taking widget',
+    defaultConfig: { content: '' },
+    icon: '📝',
+  },
+  // Add more widget templates as needed
 ] as const;
