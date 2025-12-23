@@ -1,16 +1,18 @@
+import { createAsync } from "@solidjs/router";
 import {
   DragDropProvider,
   DragDropSensors,
   DragOverlay,
   useDragDropContext
 } from "@thisbeyond/solid-dnd";
-import { createEffect, For, onMount, Show } from "solid-js";
+import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import AppDrawer from "~/components/app-drawer";
 import Dropdown from "~/components/app-menu";
 import { AppSidebar } from "~/components/app-sidebar";
 import Slot from "~/components/slot";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useIsMobile, useSidebar } from "~/components/ui/sidebar";
 import { showToast } from "~/components/ui/toast";
+import { getOrCreateDefaultDashboard } from "~/lib/actions/dashboard";
 import { useApp } from "~/lib/store";
 import { WIDGET_TEMPLATES } from "~/lib/types";
 
@@ -21,7 +23,7 @@ declare module "solid-js" {
       droppable: boolean;
     }
   }
-};
+}
 
 const SidebarSync = () => {
   const { open } = useSidebar();
@@ -34,14 +36,80 @@ export default function Home() {
   const isMobile = useIsMobile();
   const { slots, sidebarOpen, setSlotWidget } = useApp();
 
+  // Load user's dashboard (or null for guests)
+  const dashboard = createAsync(() => getOrCreateDefaultDashboard(), {
+    deferStream: true
+  });
+
+  const [widgetsLoaded, setWidgetsLoaded] = createSignal(false);
+
+  // Helper for welcome message
+  const hasSavedWidgets = () => slots().some(s => s.widget?.saved === true);
+
+  createEffect(() => {
+    const dashboardData = dashboard();
+    if (dashboardData && !widgetsLoaded()) {
+      console.log("Loading widgets from database:", dashboardData);
+
+      dashboardData?.widgets.forEach((widget: any) => {
+        const slotId = `slot-${widget.order}`;
+
+        setSlotWidget(slotId, {
+          id: widget.id,
+          type: widget.type,
+          title: widget.title,
+          config: widget.config,
+          order: widget.order,
+          saved: true,
+          createdAt: widget.createdAt,
+          updatedAt: widget.updatedAt,
+          dashboardId: widget.dashboardId,
+        });
+      });
+
+      setWidgetsLoaded(true);
+    }
+  });
+
+
+  // Sync guest session on mount
+  onMount(() => {
+    const sessionData = sessionStorage.getItem("guest_dashboard");
+    const dashboardData = dashboard();
+
+    // If guest and has session data, restore it
+    if (sessionData && !dashboardData) {
+      try {
+        const parsed = JSON.parse(sessionData);
+        parsed.forEach((slot: any) => {
+          if (slot.widget) {
+            setSlotWidget(slot.id, {
+              ...slot.widget,
+              createdAt: new Date(slot.widget.createdAt),
+              updatedAt: new Date(slot.widget.updatedAt)
+            });
+          }
+        });
+      } catch (e) {
+        console.error("Failed to restore guest session:", e);
+      }
+    }
+  });
+
+  // Save to sessionStorage for guests
+  createEffect(() => {
+    const dashboardData = dashboard();
+    if (!dashboardData) {
+      // Guest mode - save to sessionStorage
+      sessionStorage.setItem("guest_dashboard", JSON.stringify(slots()));
+    }
+  });
+
   const onDragEnd = (event: any) => {
-    const draggedId = event.draggable?.id; // t.ex. "template:clock"
-    const droppableId = event.droppable?.id; // t.ex. "slot-1"
+    const draggedId = event.draggable?.id;
+    const droppableId = event.droppable?.id;
 
     if (draggedId && droppableId) {
-      console.log(`Dropped ${draggedId} into ${droppableId}`);
-
-      // Extrahera template info från ID
       const templateId = draggedId.replace("template:", "");
       const template = WIDGET_TEMPLATES.find(t => t.id === templateId);
 
@@ -50,7 +118,9 @@ export default function Home() {
         return;
       }
 
-      // Create widget instance (unsaved)
+      const dashboardData = dashboard();
+
+      // Create widget with dashboard ID (or "guest" for guests)
       const newWidget = {
         id: crypto.randomUUID(),
         type: template.type || templateId,
@@ -60,7 +130,7 @@ export default function Home() {
         saved: false,
         createdAt: new Date(),
         updatedAt: new Date(),
-        dashboardId: "default",
+        dashboardId: dashboardData?.id || "guest",
       };
 
       setSlotWidget(droppableId, newWidget);
@@ -71,18 +141,6 @@ export default function Home() {
       });
     }
   };
-
-  onMount(() => {
-    console.log("Current slots:", slots());
-    const pendingToast = sessionStorage.getItem("pendingToast");
-    if (pendingToast) {
-      const toastData = JSON.parse(pendingToast);
-      showToast(toastData);
-      sessionStorage.removeItem("pendingToast");
-    }
-  });
-
-  const hasSavedWidgets = () => slots().some(slot => slot.widget?.saved);
 
   return (
     <main class="mx-auto px-4">
@@ -110,7 +168,7 @@ export default function Home() {
 
             {/* Welcome message */}
             <Show when={!hasSavedWidgets() && !sidebarOpen()}>
-              <div class="flex items-center justify-center min-h-[60vh]">
+              <div class="flex items-center justify-center min-h-[60svh]">
                 <div class="text-center">
                   <h2 class="mb-4">Welcome to Dshbloks</h2>
                   <p class="text-muted-foreground mb-6">
@@ -121,11 +179,11 @@ export default function Home() {
               </div>
             </Show>
 
-            {/* Slots grid */}
+            {/* Widgets grid */}
             <Show when={sidebarOpen() || hasSavedWidgets()}>
               <div class="py-8">
                 <h2 class="mb-4">Dashboard</h2>
-                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <For each={slots()}>
                     {(slot) => (
                       <Show when={sidebarOpen() || slot.widget?.saved}>
@@ -153,7 +211,7 @@ export default function Home() {
                 return (
                   <div class="bg-primary text-primary-foreground p-4 rounded-lg shadow-lg flex flex-col items-center">
                     <div class="text-4xl mb-2">{template.icon}</div>
-                    <div class="font-medium">{template.name || "Dragging..."}</div>
+                    <div class="font-medium">{template.name}</div>
                   </div>
                 );
               })()}
