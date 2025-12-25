@@ -1,23 +1,15 @@
-import { PrismaPg } from '@prisma/adapter-pg';
 import type { User } from 'better-auth';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { PrismaClient } from '../generated/prisma/client';
 import { sendEmail } from './email';
-
-// Separat Prisma-instans för Better Auth
-const authPrisma = new PrismaClient({
-  adapter: new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
-  }),
-});
+import { prisma } from './prisma';
 
 const trustedOrigins = process.env.AUTH_TRUSTED_ORIGINS
   ? process.env.AUTH_TRUSTED_ORIGINS.split(',').map((origin) => origin.trim())
   : ['http://localhost:3000']; // Fallback om env saknas
 
 export const auth = betterAuth({
-  database: prismaAdapter(authPrisma, {
+  database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
   emailVerification: {
