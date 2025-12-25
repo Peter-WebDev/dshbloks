@@ -1,9 +1,12 @@
-import { defineConfig } from "@solidjs/start/config";
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from '@solidjs/start/config';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-    vite: {
+  vite: {
     plugins: [tailwindcss()],
   },
-  middleware: "src/middleware/index.ts",
+  middleware: 'src/middleware/index.ts',
+  server: {
+    preset: 'netlify',
+  },
 });
