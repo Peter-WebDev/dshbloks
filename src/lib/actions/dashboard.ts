@@ -1,7 +1,7 @@
 import { query } from '@solidjs/router';
 import { getRequestEvent } from 'solid-js/web';
 import { auth } from '~/lib/auth';
-import prisma from '../../../lib/prisma';
+import prisma from '../prisma';
 
 // Query function to get or create user's default dashboard
 export const getOrCreateDefaultDashboard = query(async () => {
