@@ -1,4 +1,3 @@
-# Netlify configuration for SolidStart
 [build]
   command = "npm run build"
   publish = "dist"
@@ -7,28 +6,18 @@
   NODE_VERSION = "22"
   NPM_FLAGS = "--include=dev"
 
-# SPA fallback for client-side routing
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/server"
-  status = 200
-
-# Function configuration
+# Detta berättar för Netlify var server-koden finns
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["@prisma/client", "@prisma/adapter-pg", "pg"]
-  # För globala inställningar i modern syntax:
+  external_node_modules = ["@prisma/client", "@prisma/adapter-pg"]
   included_files = ["node_modules/.prisma/client/*.node"]
 
-# Specifik konfiguration för server-funktionen
 [functions.server]
   memory = 1024
   timeout = 20
 
-# Headers for security and performance
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+# VIKTIGT: Denna regel ersätter den tomma _redirects-filen
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200
