@@ -80,7 +80,7 @@ type SidebarProviderProps = Omit<ComponentProps<"div">, "style"> & {
 }
 
 const SidebarProvider: Component<SidebarProviderProps> = (rawProps) => {
-  const props = mergeProps({ defaultOpen: true }, rawProps)
+  const props = mergeProps({ defaultOpen: false }, rawProps)
   const [local, others] = splitProps(props, [
     "defaultOpen",
     "open",
