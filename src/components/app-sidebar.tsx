@@ -40,9 +40,9 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                 <Dropdown />
             </SidebarHeader>
             <SidebarContent>
-                <div class="mb-4">
-                    <h4 class="text-sm font-semibold">Add widgets</h4>
-                    <p class="text-xs text-muted-foreground">Drag a widget into the dashboard slots</p>
+                <div>
+                    <h2>Widgets</h2>
+                    <p class="text-type-sm text-muted-foreground">Drag a widget into the dashboard slots</p>
                 </div>
                 <Grid cols={2} class="gap-4">
                     <For each={WIDGET_TEMPLATES}>{(template) => (

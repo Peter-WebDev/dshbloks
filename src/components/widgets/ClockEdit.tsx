@@ -38,12 +38,9 @@ export default function ClockEdit(props: ClockEditProps) {
 
     return (
         <div class="w-full space-y-6">
-            <div class="text-center">
-                <div class="text-4xl mb-2">🕐</div>
-                <div class="text-3xl font-bold mb-2">{time()}</div>
-                <div class="text-sm text-muted-foreground">
-                    {props.config.timezone}
-                </div>
+            <div>
+                <h2 class="text-type-sm">🕐{props.config.timezone.replace("_", " ")}</h2>
+                <h3 class="text-2xl">{time()}</h3>
             </div>
 
             <div class="flex gap-2">
