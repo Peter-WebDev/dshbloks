@@ -167,7 +167,7 @@ export default function Home() {
             </header>
 
             {/* Welcome message */}
-            <Show when={!hasSavedWidgets() && !sidebarOpen()}>
+            <Show when={!sidebarOpen() && !hasSavedWidgets()}>
               <div class="flex items-center justify-center min-h-[60svh]">
                 <div class="text-center">
                   <h2 class="mb-4">Welcome to Dshbloks</h2>
