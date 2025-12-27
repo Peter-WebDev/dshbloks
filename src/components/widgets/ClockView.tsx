@@ -24,14 +24,13 @@ export default function ClockView(props: ClockViewProps) {
             });
             setTime(timeFormatter.format(now));
 
-            const dateFormatter = new Intl.DateTimeFormat("en-US", {
+            const dateStr = now.toLocaleDateString("en-GB", {
                 timeZone: props.config.timezone,
-                weekday: "short",
-                year: "numeric",
-                month: "short",
                 day: "numeric",
-            });
-            setDate(dateFormatter.format(now));
+                month: "short",
+                year: "numeric",
+            }).toLowerCase();
+            setDate(dateStr);
         };
 
         updateTime();
@@ -40,20 +39,16 @@ export default function ClockView(props: ClockViewProps) {
     });
 
     return (
-        <div class="flex flex-col gap-2 items-center justify-center">
-            <h2>Clock</h2>
-            <div class="text-5xl mb-2">🕐</div>
+        <div class="flex flex-col gap-2">
+            <h2><span class="text-2xl">🕐{props.config.timezone.replace("_", " ")}</span></h2>
             <h3>
-                <time class="text-4xl font-bold mb-2" datetime={new Date().toISOString()}>
+                <time class="text-7xl" datetime={new Date().toISOString()}>
                     {time()}
                 </time>
             </h3>
-            <div class="text-type-sm text-muted-foreground mb-2">
+            <h4 class="text-type-sm text-muted-foreground mb-2">
                 {date()}
-            </div>
-            <div class="text-type-xs text-muted-foreground">
-                {props.config.timezone}
-            </div>
+            </h4>
         </div>
     );
 }
