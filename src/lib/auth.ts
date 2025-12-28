@@ -22,6 +22,7 @@ export const auth = betterAuth({
     (process.env.NODE_ENV === 'production'
       ? 'https://dshbloks.popjosef.se'
       : 'http://localhost:3000'),
+  basePath: '/api/auth',
   emailVerification: {
     sendVerificationEmail: async ({
       user,
@@ -58,7 +59,7 @@ export const auth = betterAuth({
     },
   },
   advanced: {
-    disableCSRFCheck: false,
+    disableCSRFCheck: true,
   },
   trustedOrigins: trustedOrigins,
 });
