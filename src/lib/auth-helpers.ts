@@ -9,6 +9,7 @@ export async function getSession() {
 
   return await auth.api.getSession({
     headers: event.request.headers,
+    method: 'GET',
   });
 }
 
