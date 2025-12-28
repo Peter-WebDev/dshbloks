@@ -16,11 +16,13 @@ const trustedOrigins = process.env.AUTH_TRUSTED_ORIGINS
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
+    transaction: true,
   }),
   baseURL:
-    process.env.NODE_ENV === 'production'
+    process.env.BETTER_AUTH_URL ??
+    (process.env.NODE_ENV === 'production'
       ? 'https://dshbloks.popjosef.se'
-      : 'http://localhost:3000',
+      : 'http://localhost:3000'),
   emailVerification: {
     sendVerificationEmail: async ({
       user,
