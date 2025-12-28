@@ -50,6 +50,7 @@ export default function Dropdown() {
                             variant: "success",
                         });
                         navigate("/");
+                        window.location.reload();
                     }}
                     >
                         {links[4].label}
