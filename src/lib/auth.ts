@@ -53,13 +53,12 @@ export const auth = betterAuth({
     requireEmailVerification: true,
   },
   session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 5, // 5 minutes
     cookieCache: {
       enabled: true,
       maxAge: 60 * 5, // 5 minutes
     },
-  },
-  advanced: {
-    disableCSRFCheck: true,
   },
   trustedOrigins: trustedOrigins,
 });
