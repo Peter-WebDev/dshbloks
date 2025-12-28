@@ -6,12 +6,18 @@ import { prisma } from './prisma';
 
 const trustedOrigins = process.env.AUTH_TRUSTED_ORIGINS
   ? process.env.AUTH_TRUSTED_ORIGINS.split(',').map((origin) => origin.trim())
-  : ['http://localhost:3000']; // Fallback om env saknas
+  : process.env.NODE_ENV === 'production'
+  ? ['https://dshbloks.popjosef.se'] // Din Netlify-domain
+  : ['http://localhost:3000'];
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
+  baseURL:
+    process.env.NODE_ENV === 'production'
+      ? 'https://dshbloks.popjosef.se'
+      : 'http://localhost:3000',
   emailVerification: {
     sendVerificationEmail: async ({
       user,
@@ -48,7 +54,7 @@ export const auth = betterAuth({
     },
   },
   advanced: {
-    disableCSRFCheck: true,
+    disableCSRFCheck: false,
   },
   trustedOrigins: trustedOrigins,
 });
