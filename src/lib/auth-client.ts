@@ -1,10 +1,5 @@
 import { createAuthClient } from 'better-auth/solid';
 
-const baseURL =
-  typeof window !== 'undefined'
-    ? `${window.location.origin}/api/auth`
-    : process.env.BETTER_AUTH_URL ?? 'http://localhost:3000';
-
 export const {
   signIn,
   signOut,
@@ -13,6 +8,6 @@ export const {
   useSession,
   getSession,
 } = createAuthClient({
-  baseURL,
+  baseURL: 'https://dshbloks.popjosef.se',
   basePath: '/api/auth',
 });
