@@ -8,7 +8,10 @@ const trustedOrigins = process.env.AUTH_TRUSTED_ORIGINS
   ? process.env.AUTH_TRUSTED_ORIGINS.split(',').map((origin) => origin.trim())
   : process.env.NODE_ENV === 'production'
   ? ['https://dshbloks.popjosef.se'] // Din Netlify-domain
-  : ['http://localhost:3000'];
+  : [
+      'http://localhost:3000',
+      'https://deploy-preview-35--dshbloks.netlify.app',
+    ];
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
