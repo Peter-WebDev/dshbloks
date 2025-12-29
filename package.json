@@ -15,6 +15,7 @@
     "@corvu/utils": "^0.4.2",
     "@fontsource-variable/geist": "^5.2.8",
     "@kobalte/core": "^0.13.11",
+    "@netlify/vite-plugin": "^2.7.19",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",
     "@solidjs/router": "^0.15.0",
