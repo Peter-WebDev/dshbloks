@@ -5,6 +5,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  ssr: true,
   server: {
     preset: 'netlify',
   },
