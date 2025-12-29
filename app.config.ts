@@ -6,6 +6,6 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   server: {
-    preset: 'netlify',
+    preset: 'netlify_edge',
   },
 });
