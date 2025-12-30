@@ -5,7 +5,7 @@ import {
   DragOverlay,
   useDragDropContext
 } from "@thisbeyond/solid-dnd";
-import { createEffect, createSignal, For, onMount, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, For, onMount, Show } from "solid-js";
 import AppDrawer from "~/components/app-drawer";
 import Dropdown from "~/components/app-menu";
 import { AppSidebar } from "~/components/app-sidebar";
@@ -37,7 +37,7 @@ export default function Home() {
   const isMobile = useIsMobile();
   const { slots, sidebarOpen, setSlotWidget } = useApp();
   const session = useSession();
-  const user = session().data?.user?.name || "Guest";
+  const user = createMemo(() => session().data?.user?.name || "Guest");
 
   // Load user's dashboard (or null for guests)
   const dashboard = createAsync(() => getOrCreateDefaultDashboard(), {
@@ -185,7 +185,7 @@ export default function Home() {
             {/* Widgets grid */}
             <Show when={sidebarOpen() || hasSavedWidgets()}>
               <div class="py-8">
-                <h2 class="mb-4">{user}'s Dashboard</h2>
+                <h2 class="mb-4">{user()}'s Dashboard</h2>
                 <div class="mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <For each={slots()}>
                     {(slot) => (
