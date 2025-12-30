@@ -7,8 +7,10 @@ export async function getSession() {
   const event = getRequestEvent();
   if (!event) return null;
 
+  const clonedRequest = event.request.clone();
+
   return await auth.api.getSession({
-    headers: event.request.headers,
+    headers: clonedRequest.headers,
   });
 }
 
