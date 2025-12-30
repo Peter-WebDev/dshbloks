@@ -1,32 +1,17 @@
 import { query } from '@solidjs/router';
-import { getRequestEvent } from 'solid-js/web';
-import { auth } from '~/lib/auth';
 import prisma from '../prisma';
 
 // Query function to get or create user's default dashboard
-export const getOrCreateDefaultDashboard = query(async () => {
+export const getOrCreateDefaultDashboard = query(async (userId?: string) => {
   'use server';
 
+  if (!userId) return null; // Guest mode
+
   try {
-    // Get request event to access headers
-    const event = getRequestEvent();
-    if (!event) {
-      return null; // Guest mode
-    }
-
-    // Get current session
-    const session = await auth.api.getSession({
-      headers: event.request.headers,
-    });
-
-    if (!session?.user?.id) {
-      return null; // Guest mode
-    }
-
     // Try to find user's default dashboard
     let dashboard = await prisma.dashboard.findFirst({
       where: {
-        userId: session.user.id,
+        userId,
         isDefault: true,
       },
       include: {
@@ -42,7 +27,7 @@ export const getOrCreateDefaultDashboard = query(async () => {
     if (!dashboard) {
       dashboard = await prisma.dashboard.create({
         data: {
-          userId: session.user.id,
+          userId,
           name: 'My Dashboard',
           isDefault: true,
         },

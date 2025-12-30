@@ -1,11 +1,11 @@
-import { createAsync, useAction } from "@solidjs/router";
+import { useAction } from "@solidjs/router";
 import { createDroppable } from "@thisbeyond/solid-dnd";
 import { Match, Switch } from "solid-js";
 import { showToast } from "~/components/ui/toast";
 import ClockConfiguration from "~/components/widgets/ClockConfiguration";
 import ClockEdit from "~/components/widgets/ClockEdit";
 import ClockView from "~/components/widgets/ClockView";
-import { getOrCreateDefaultDashboard } from "~/lib/actions/dashboard";
+import { Dashboard } from "~/generated/prisma/client";
 import {
     createWidgetAction,
     deleteWidgetAction,
@@ -20,6 +20,7 @@ import type { ClockConfig, Slot as SlotType } from "~/lib/types";
 interface SlotProps {
     slot: SlotType;
     sidebarOpen: boolean;
+    dashboard: Dashboard | null | undefined;
 }
 
 const Slot = (props: SlotProps) => {
@@ -31,8 +32,6 @@ const Slot = (props: SlotProps) => {
         clearSnapshot,
         snapshots
     } = useApp();
-
-    const dashboard = createAsync(() => getOrCreateDefaultDashboard());
 
     const createWidget = useAction(createWidgetAction);
     const updateWidget = useAction(updateWidgetAction);
@@ -49,7 +48,7 @@ const Slot = (props: SlotProps) => {
         if (!props.slot.widget) return;
 
         // Check if user is authenticated or guest
-        const dashboardData = dashboard();
+        const dashboardData = props.dashboard;
         const isGuest = !dashboardData;
 
         // Check if we have a snapshot - if yes, it means we're editing an existing widget
@@ -75,7 +74,7 @@ const Slot = (props: SlotProps) => {
         if (isNewWidget) {
             // Create new widget in DB
             const input: CreateWidgetInput = {
-                dashboardId: dashboardData.id,
+                dashboardId: dashboardData!.id,
                 type: props.slot.widget.type,
                 title: props.slot.widget.title,
                 config: config,
@@ -116,7 +115,7 @@ const Slot = (props: SlotProps) => {
                 id: snapshot.id,
                 config: config,
                 title: snapshot.title,
-                userId: dashboardData.userId,
+                userId: dashboardData!.userId,
             };
 
             const result = await updateWidget(input);
@@ -175,7 +174,7 @@ const Slot = (props: SlotProps) => {
         if (!props.slot.widget) return;
 
         // Check if user is authenticated or guest
-        const dashboardData = dashboard();
+        const dashboardData = props.dashboard;
         const isGuest = !dashboardData;
 
         // If authenticated and widget is saved in DB, delete from DB
