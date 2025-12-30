@@ -13,6 +13,7 @@ import Slot from "~/components/slot";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useIsMobile, useSidebar } from "~/components/ui/sidebar";
 import { showToast } from "~/components/ui/toast";
 import { getOrCreateDefaultDashboard } from "~/lib/actions/dashboard";
+import { useSession } from "~/lib/auth-client";
 import { useApp } from "~/lib/store";
 import { WIDGET_TEMPLATES } from "~/lib/types";
 
@@ -35,6 +36,8 @@ const SidebarSync = () => {
 export default function Home() {
   const isMobile = useIsMobile();
   const { slots, sidebarOpen, setSlotWidget } = useApp();
+  const session = useSession();
+  const user = session().data?.user?.name || "Guest";
 
   // Load user's dashboard (or null for guests)
   const dashboard = createAsync(() => getOrCreateDefaultDashboard(), {
@@ -182,7 +185,7 @@ export default function Home() {
             {/* Widgets grid */}
             <Show when={sidebarOpen() || hasSavedWidgets()}>
               <div class="py-8">
-                <h2 class="mb-4">Dashboard</h2>
+                <h2 class="mb-4">{user}'s Dashboard</h2>
                 <div class="mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <For each={slots()}>
                     {(slot) => (
