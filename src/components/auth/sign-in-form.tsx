@@ -50,10 +50,7 @@ export default function SignInForm() {
             description: "You have successfully signed in.",
             variant: "success",
         });
-
-        setTimeout(() => {
-            navigate("/", { replace: true });
-        }, 1000);
+        navigate("/", { replace: true });
     };
 
     return (

@@ -53,10 +53,7 @@ export default function SignUpForm() {
             description: "You have successfully signed up. Please verify email and sign in!",
             variant: "success",
         });
-
-        setTimeout(() => {
-            navigate("/", { replace: true });
-        }, 1000);
+        navigate("/", { replace: true });
     };
 
     return (
