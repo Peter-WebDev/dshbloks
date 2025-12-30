@@ -38,7 +38,6 @@ export default function SignInForm() {
 
         if (error) {
             console.error("Sign in failed:", error);
-            // TODO: Show error to user
             showToast({
                 title: "Sign in failed",
                 description: error.message || "An unknown error occurred",
@@ -46,13 +45,15 @@ export default function SignInForm() {
             });
             return;
         }
-        sessionStorage.setItem("pendingToast", JSON.stringify({
+        showToast({
             title: "Welcome in!",
             description: "You have successfully signed in.",
             variant: "success",
-        }));
+        });
 
-        navigate("/", { replace: true });
+        setTimeout(() => {
+            navigate("/", { replace: true });
+        }, 1000);
     };
 
     return (

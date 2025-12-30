@@ -36,6 +36,7 @@ export const auth = betterAuth({
             `,
       });
     },
+    redirectTo: '/',
   },
   emailAndPassword: {
     enabled: true,
@@ -46,9 +47,6 @@ export const auth = betterAuth({
       enabled: true,
       maxAge: 60 * 5, // 5 minutes
     },
-  },
-  advanced: {
-    disableCSRFCheck: true,
   },
   trustedOrigins: trustedOrigins,
 });

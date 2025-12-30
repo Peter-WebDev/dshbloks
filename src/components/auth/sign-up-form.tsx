@@ -48,20 +48,22 @@ export default function SignUpForm() {
             });
             return;
         }
-        sessionStorage.setItem("pendingToast", JSON.stringify({
+        showToast({
             title: "Welcome to Dshbloks!",
-            description: "You have successfully signed up.",
+            description: "You have successfully signed up. Please verify email and sign in!",
             variant: "success",
-        }));
+        });
 
-        navigate("/", { replace: true });
+        setTimeout(() => {
+            navigate("/", { replace: true });
+        }, 1000);
     };
 
     return (
         <Card class="w-full max-w-md px-6 mx-auto">
             <CardHeader class="space-y-1">
                 <h1>Sign Up</h1>
-                <CardDescription>Enter your details below to sign up and manage your dashboards.</CardDescription>
+                <CardDescription>Enter details below to be able to save your widgets.</CardDescription>
             </CardHeader>
             <CardContent class="grid gap-4">
                 <form onSubmit={handleSubmit} novalidate class="space-y-6">
