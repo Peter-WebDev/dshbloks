@@ -26,7 +26,7 @@ export type DeleteWidgetInput = {
 export const createWidgetAction = action(async (input: CreateWidgetInput) => {
   'use server';
 
-  console.log('=== CREATE WIDGET ACTION ===');
+  console.log('=== CREATE WIDGET START ===');
   console.log('Input:', JSON.stringify(input, null, 2));
 
   try {
@@ -88,9 +88,12 @@ export const createWidgetAction = action(async (input: CreateWidgetInput) => {
 export const updateWidgetAction = action(async (input: UpdateWidgetInput) => {
   'use server';
 
+  console.log('=== UPDATE WIDGET START ===');
+  console.log('Input:', JSON.stringify(input, null, 2));
   if (!input.userId) return { success: false, error: 'Unauthorized' };
 
   try {
+    console.log('Updating widget:', input.id, 'userId:', input.userId);
     const widget = await prisma.widget.update({
       where: {
         id: input.id,
@@ -105,9 +108,20 @@ export const updateWidgetAction = action(async (input: UpdateWidgetInput) => {
       },
     });
 
+    console.log('Widget updated successfully:', widget.id);
     return { success: true, widget };
   } catch (error) {
+    console.error('=== ERROR IN UPDATE WIDGET ===');
     console.error('Error updating widget:', error);
+    console.error(
+      'Error type:',
+      error instanceof Error ? error.constructor.name : typeof error
+    );
+    console.error(
+      'Error message:',
+      error instanceof Error ? error.message : String(error)
+    );
+    console.error('Error stack:', error instanceof Error ? error.stack : 'N/A');
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to update widget',
@@ -117,10 +131,16 @@ export const updateWidgetAction = action(async (input: UpdateWidgetInput) => {
 
 export const deleteWidgetAction = action(async (input: DeleteWidgetInput) => {
   'use server';
+  console.log('=== DELETE START ===');
+  console.log('Input userId:', input.userId);
 
-  if (!input.userId) return { success: false, error: 'Unauthorized' };
+  if (!input.userId) {
+    console.log('No userId - unauthorized');
+    return { success: false, error: 'Unauthorized' };
+  }
 
   try {
+    console.log('Deleting widget:', input.id);
     await prisma.widget.delete({
       where: {
         id: input.id,
@@ -129,7 +149,7 @@ export const deleteWidgetAction = action(async (input: DeleteWidgetInput) => {
         },
       },
     });
-
+    console.log('Delete success');
     return { success: true };
   } catch (error) {
     console.error('Error deleting widget:', error);
