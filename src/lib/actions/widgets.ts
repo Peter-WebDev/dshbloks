@@ -1,6 +1,5 @@
 import { action } from '@solidjs/router';
 import { WidgetType } from '~/generated/prisma/client';
-import { getSession } from '../auth-helpers';
 import prisma from '../prisma';
 
 export type CreateWidgetInput = {
@@ -9,16 +8,19 @@ export type CreateWidgetInput = {
   title?: string | null;
   config: Record<string, any>;
   order: number;
+  userId: string;
 };
 
 export type UpdateWidgetInput = {
   id: string;
   config: Record<string, any>;
   title?: string | null;
+  userId: string;
 };
 
 export type DeleteWidgetInput = {
   id: string;
+  userId: string;
 };
 
 export const createWidgetAction = action(async (input: CreateWidgetInput) => {
@@ -28,11 +30,8 @@ export const createWidgetAction = action(async (input: CreateWidgetInput) => {
   console.log('Input:', JSON.stringify(input, null, 2));
 
   try {
-    const session = await getSession();
-    console.log('Session:', session ? 'exists' : 'null');
-
-    if (!session) {
-      console.error('No session found');
+    if (!input.userId) {
+      console.error('No userId provided');
       return { success: false, error: 'Unauthorized' };
     }
 
@@ -40,11 +39,11 @@ export const createWidgetAction = action(async (input: CreateWidgetInput) => {
       'Looking for dashboard:',
       input.dashboardId,
       'userId:',
-      session.user.id
+      input.userId
     );
 
     const dashboard = await prisma.dashboard.findFirst({
-      where: { id: input.dashboardId, userId: session.user.id },
+      where: { id: input.dashboardId, userId: input.userId },
     });
 
     console.log('Dashboard found:', dashboard ? 'yes' : 'no');
@@ -89,15 +88,14 @@ export const createWidgetAction = action(async (input: CreateWidgetInput) => {
 export const updateWidgetAction = action(async (input: UpdateWidgetInput) => {
   'use server';
 
-  const session = await getSession();
-  if (!session) return { success: false, error: 'Unauthorized' };
+  if (!input.userId) return { success: false, error: 'Unauthorized' };
 
   try {
     const widget = await prisma.widget.update({
       where: {
         id: input.id,
         dashboard: {
-          userId: session.user.id, // Owner control
+          userId: input.userId, // Owner control
         },
       },
       data: {
@@ -120,15 +118,14 @@ export const updateWidgetAction = action(async (input: UpdateWidgetInput) => {
 export const deleteWidgetAction = action(async (input: DeleteWidgetInput) => {
   'use server';
 
-  const session = await getSession();
-  if (!session) return { success: false, error: 'Unauthorized' };
+  if (!input.userId) return { success: false, error: 'Unauthorized' };
 
   try {
     await prisma.widget.delete({
       where: {
         id: input.id,
         dashboard: {
-          userId: session.user.id, // Owner control
+          userId: input.userId, // Owner control
         },
       },
     });
