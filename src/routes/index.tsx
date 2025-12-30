@@ -38,9 +38,10 @@ export default function Home() {
   const { slots, sidebarOpen, setSlotWidget } = useApp();
   const session = useSession();
   const user = createMemo(() => session().data?.user?.name || "Guest");
+  const userId = () => session().data?.user?.id;
 
   // Load user's dashboard (or null for guests)
-  const dashboard = createAsync(() => getOrCreateDefaultDashboard(), {
+  const dashboard = createAsync(() => getOrCreateDefaultDashboard(userId()), {
     deferStream: true
   });
 
@@ -190,7 +191,7 @@ export default function Home() {
                   <For each={slots()}>
                     {(slot) => (
                       <Show when={sidebarOpen() || slot.widget?.saved}>
-                        <Slot slot={slot} sidebarOpen={sidebarOpen()} />
+                        <Slot slot={slot} sidebarOpen={sidebarOpen()} dashboard={dashboard()} />
                       </Show>
                     )}
                   </For>
