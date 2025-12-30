@@ -49,9 +49,7 @@ export default function Dropdown() {
                             description: "You have been logged out.",
                             variant: "success",
                         });
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000);
+                        window.location.reload();
                     }}
                     >
                         {links[4].label}

@@ -39,6 +39,7 @@ export default function Home() {
   const session = useSession();
   const user = createMemo(() => session().data?.user?.name || "Guest");
   const userId = () => session().data?.user?.id;
+  const [hasLoggedIn, setHasLoggedIn] = createSignal(false);
 
   // Load user's dashboard (or null for guests)
   const dashboard = createAsync(() => getOrCreateDefaultDashboard(userId()), {
@@ -49,6 +50,12 @@ export default function Home() {
 
   // Helper for welcome message
   const hasSavedWidgets = () => slots().some(s => s.widget?.saved === true);
+
+  createEffect(() => {
+    if (session().data?.user) {
+      setHasLoggedIn(true);
+    }
+  });
 
   createEffect(() => {
     const dashboardData = dashboard();
@@ -100,10 +107,12 @@ export default function Home() {
     }
   });
 
-  // Save to sessionStorage for guests
+  // Save to sessionStorage for guests Only
   createEffect(() => {
     const dashboardData = dashboard();
-    if (!dashboardData) {
+    const isLoggedIn = !!session().data?.user;
+
+    if (!dashboardData && !isLoggedIn && !hasLoggedIn()) {
       // Guest mode - save to sessionStorage
       sessionStorage.setItem("guest_dashboard", JSON.stringify(slots()));
     }
