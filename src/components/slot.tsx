@@ -2,9 +2,9 @@ import { useAction } from "@solidjs/router";
 import { createDroppable } from "@thisbeyond/solid-dnd";
 import { Match, Switch } from "solid-js";
 import { showToast } from "~/components/ui/toast";
-import ClockConfiguration from "~/components/widgets/clockconfiguration";
-import ClockEdit from "~/components/widgets/clockedit";
-import ClockView from "~/components/widgets/clockview";
+import ClockConfiguration from "~/components/widgets/ClockConfiguration";
+import ClockEdit from "~/components/widgets/ClockEdit";
+import ClockView from "~/components/widgets/ClockView";
 import { Dashboard } from "~/generated/prisma/client";
 import {
     createWidgetAction,
