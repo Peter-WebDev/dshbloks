@@ -68,7 +68,7 @@ const Slot = (props: SlotProps) => {
                 description: "Sign in to save to cloud",
             });
             clearSnapshot(props.slot.id);
-            return; // ← Avslutar här, ingen DB-operation
+            return;
         }
 
         // Authenticated user - create or update in database
@@ -80,6 +80,7 @@ const Slot = (props: SlotProps) => {
                 title: props.slot.widget.title,
                 config: config,
                 order: props.slot.widget.order,
+                userId: dashboardData.userId,
             };
 
             const result = await createWidget(input);
@@ -115,6 +116,7 @@ const Slot = (props: SlotProps) => {
                 id: snapshot.id,
                 config: config,
                 title: snapshot.title,
+                userId: dashboardData.userId,
             };
 
             const result = await updateWidget(input);
@@ -180,6 +182,7 @@ const Slot = (props: SlotProps) => {
         if (!isGuest && props.slot.widget.saved && props.slot.widget.id) {
             const input: DeleteWidgetInput = {
                 id: props.slot.widget.id,
+                userId: dashboardData.userId,
             };
 
             const result = await deleteWidget(input);
