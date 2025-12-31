@@ -54,13 +54,5 @@ export const WIDGET_TEMPLATES: WidgetTemplate[] = [
     defaultConfig: { timezone: 'Europe/Stockholm', format24h: true },
     icon: '🕐',
   },
-  {
-    id: 'notes',
-    type: 'notes',
-    name: 'Notes',
-    description: 'A simple note-taking widget',
-    defaultConfig: { content: '' },
-    icon: '📝',
-  },
   // Add more widget templates as needed
 ] as const;
