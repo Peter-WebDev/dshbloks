@@ -6,14 +6,10 @@ import ClockConfiguration from "~/components/widgets/ClockConfiguration";
 import ClockEdit from "~/components/widgets/ClockEdit";
 import ClockView from "~/components/widgets/ClockView";
 import { Dashboard } from "~/generated/prisma/client";
-import {
-    createWidgetAction,
-    deleteWidgetAction,
-    updateWidgetAction,
-    type CreateWidgetInput,
-    type DeleteWidgetInput,
-    type UpdateWidgetInput
-} from "~/lib/actions/widgets";
+import { createWidgetAction } from "~/lib/actions/widgets/create";
+import { deleteWidgetAction } from "~/lib/actions/widgets/delete";
+import type { CreateWidgetInput, DeleteWidgetInput, UpdateWidgetInput } from "~/lib/actions/widgets/types";
+import { updateWidgetAction } from "~/lib/actions/widgets/update";
 import { useApp } from "~/lib/store";
 import type { ClockConfig, Slot as SlotType } from "~/lib/types";
 
