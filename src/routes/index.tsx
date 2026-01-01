@@ -38,6 +38,7 @@ export default function Home() {
   const { slots, sidebarOpen, setSlotWidget } = useApp();
   const session = useSession();
   const user = createMemo(() => session().data?.user?.name || "Guest");
+  const isLoggedIn = createMemo(() => !!session().data?.user);
   const userId = () => session().data?.user?.id;
   const [hasLoggedIn, setHasLoggedIn] = createSignal(false);
 
@@ -56,6 +57,8 @@ export default function Home() {
       setHasLoggedIn(true);
     }
   });
+
+  const isSessionReady = () => !session().isPending;
 
   createEffect(() => {
     const dashboardData = dashboard();
@@ -178,34 +181,40 @@ export default function Home() {
                 <span>Information in a dash</span>
               </div>
             </header>
+            <Show when={isSessionReady()} fallback={<div class="flex items-center justify-center min-h-[60svh]">Loading...</div>}>
 
-            {/* Welcome message */}
-            <Show when={!sidebarOpen() && !hasSavedWidgets()}>
-              <div class="flex items-center justify-center min-h-[60svh]">
-                <div class="text-center">
-                  <h2 class="mb-4">Welcome to Dshbloks</h2>
-                  <p class="text-muted-foreground mb-6">
-                    Get started by opening the sidebar and adding your first widget
-                  </p>
-                  <div class="text-6xl">📊</div>
-                </div>
-              </div>
-            </Show>
-
-            {/* Widgets grid */}
-            <Show when={sidebarOpen() || hasSavedWidgets()}>
-              <div class="py-8">
-                <h2 class="mb-4">{user()}'s Dashboard</h2>
-                <div class="mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <For each={slots()}>
-                    {(slot) => (
-                      <Show when={sidebarOpen() || slot.widget?.saved}>
-                        <Slot slot={slot} sidebarOpen={sidebarOpen()} dashboard={dashboard()} />
+              {/* Welcome message */}
+              <Show when={!sidebarOpen() && !hasSavedWidgets()}>
+                <div class="flex items-center justify-center min-h-[60svh]">
+                  <div class="text-center">
+                    <h2 class="mb-4">Welcome to Dshbloks
+                      <Show when={isLoggedIn()}>
+                        , {user()}
                       </Show>
-                    )}
-                  </For>
+                    </h2>
+                    <p class="text-muted-foreground mb-6">
+                      Get started by opening the sidebar and adding your first widget
+                    </p>
+                    <div class="text-6xl">📊</div>
+                  </div>
                 </div>
-              </div>
+              </Show>
+
+              {/* Widgets grid */}
+              <Show when={sidebarOpen() || hasSavedWidgets()}>
+                <div class="py-8">
+                  <h2 class="mb-4">{user()}'s Dashboard</h2>
+                  <div class="mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <For each={slots()}>
+                      {(slot) => (
+                        <Show when={sidebarOpen() || slot.widget?.saved}>
+                          <Slot slot={slot} sidebarOpen={sidebarOpen()} dashboard={dashboard()} />
+                        </Show>
+                      )}
+                    </For>
+                  </div>
+                </div>
+              </Show>
             </Show>
 
             <DragOverlay>
