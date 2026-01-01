@@ -123,7 +123,7 @@ export default function SignUpForm() {
                     <Separator class="grow mt-2.5" />
                 </div>
                 <Button as="button" variant="secondary" class="w-full">
-                    <img height="24" width="24" src="https://cdn.simpleicons.org/github/black/white" />Github
+                    <img alt="" height="24" width="24" src="https://cdn.simpleicons.org/github/black/white" />Github
                 </Button>
             </CardFooter>
         </Card>

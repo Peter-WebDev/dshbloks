@@ -57,7 +57,7 @@ export default function SignInForm() {
         <Card class="w-full max-w-md px-6 mx-auto">
             <CardHeader class="space-y-1">
                 <h1>Sign In</h1>
-                <CardDescription>Enter your details below to sign in to your account and manage your dashboards.</CardDescription>
+                <CardDescription>Enter your details below to sign in to your account.</CardDescription>
             </CardHeader>
             <CardContent class="grid gap-4">
                 <form onSubmit={handleSubmit} novalidate class="space-y-6">
@@ -102,8 +102,8 @@ export default function SignInForm() {
                     <p class="text-type-xs uppercase">Or sign in with</p>
                     <Separator class="grow mt-2.5" />
                 </div>
-                <Button as="button" variant="secondary" class="w-full">
-                    <img height="24" width="24" src="https://cdn.simpleicons.org/github/black/white" />Github
+                <Button as="button" variant="secondary" class="w-full" name="Github">
+                    <img alt="" height="24" width="24" src="https://cdn.simpleicons.org/github/black/white" />Github
                 </Button>
             </CardFooter>
         </Card>
