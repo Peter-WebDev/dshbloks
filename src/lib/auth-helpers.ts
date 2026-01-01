@@ -7,11 +7,21 @@ export async function getSession() {
   const event = getRequestEvent();
   if (!event) return null;
 
-  const clonedRequest = event.request.clone();
-
-  return await auth.api.getSession({
-    headers: clonedRequest.headers,
-  });
+  try {
+    const clonedRequest = event.request.clone();
+    return await auth.api.getSession({
+      headers: clonedRequest.headers,
+    });
+  } catch (error) {
+    // If request already consumed, try without clone
+    console.warn(
+      'Could not clone request, falling back to headers only:',
+      error
+    );
+    return await auth.api.getSession({
+      headers: event.request.headers,
+    });
+  }
 }
 
 export async function requireAuth() {
@@ -23,4 +33,21 @@ export async function requireAuth() {
   }
 
   return session;
+}
+
+export async function revokeCurrentSession() {
+  'use server';
+  const event = getRequestEvent();
+  if (!event) return null;
+
+  try {
+    const response = await auth.api.signOut({
+      headers: event.request.headers,
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error revoking session:', error);
+    return null;
+  }
 }
