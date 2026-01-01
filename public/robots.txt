@@ -1,2 +1,12 @@
 User-agent: *
-Disallow: /
+# Allow indexing
+Allow: /
+
+# Block indexing
+Disallow: /account
+Disallow: /sign-in
+Disallow: /sign-up
+
+# Block internal API-calls and server functions
+Disallow: /_server
+Disallow: /api/
