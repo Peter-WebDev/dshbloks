@@ -8,19 +8,14 @@ export async function getSession() {
   if (!event) return null;
 
   try {
-    const clonedRequest = event.request.clone();
-    return await auth.api.getSession({
-      headers: clonedRequest.headers,
-    });
-  } catch (error) {
-    // If request already consumed, try without clone
-    console.warn(
-      'Could not clone request, falling back to headers only:',
-      error
-    );
-    return await auth.api.getSession({
+    // Better Auth behöver hela headers-objektet (inkl. cookies)
+    const session = await auth.api.getSession({
       headers: event.request.headers,
     });
+    return session;
+  } catch (error) {
+    console.warn('Failed to get session:', error);
+    return null;
   }
 }
 
