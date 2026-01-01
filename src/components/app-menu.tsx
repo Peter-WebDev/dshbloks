@@ -10,7 +10,6 @@ const links = [
     { href: "/sign-in", label: "Sign In" },
     { href: "/sign-up", label: "Sign Up" },
     { href: "/account", label: "Account" },
-    { href: "/dashboard", label: "Dashboard" },
     { href: "/sign-out", label: "Sign Out" },
 ];
 
@@ -40,7 +39,6 @@ export default function Dropdown() {
                 </Show>
                 <Show when={isLoggedIn()}>
                     <DropdownMenuItem onSelect={() => navigate("/account")}>{links[2].label}</DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => navigate("/dashboard")}>{links[3].label}</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onSelect={async () => {
                         await signOut();
@@ -52,7 +50,7 @@ export default function Dropdown() {
                         window.location.reload();
                     }}
                     >
-                        {links[4].label}
+                        {links[3].label}
                     </DropdownMenuItem>
                 </Show>
             </DropdownMenuContent>

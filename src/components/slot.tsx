@@ -218,7 +218,7 @@ const Slot = (props: SlotProps) => {
             <Switch>
                 <Match when={isEmpty()}>
                     <div class="text-muted-foreground text-sm flex flex-col items-center gap-2">
-                        <span class="text-2xl opacity-20">📥</span>
+                        <span class="text-2xl">📥</span>
                         <span>Drop widget here</span>
                     </div>
                 </Match>

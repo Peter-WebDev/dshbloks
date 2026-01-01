@@ -262,6 +262,7 @@ const SidebarTrigger = <T extends ValidComponent = "button">(props: SidebarTrigg
 
   return (
     <Button
+      role="toggle"
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
@@ -280,11 +281,12 @@ const SidebarTrigger = <T extends ValidComponent = "button">(props: SidebarTrigg
         stroke-linecap="round"
         stroke-linejoin="round"
         class="size-4"
+        aria-label="Dashboard Toggle"
       >
         <rect width="18" height="18" x="3" y="3" rx="2" />
         <path d="M9 3v18" />
       </svg>
-      <span class="sr-only">Toggle Sidebar</span>
+      <span class="sr-only">Sidebar</span>
     </Button>
   )
 }
