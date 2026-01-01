@@ -8,14 +8,25 @@ export async function getSession() {
   if (!event) return null;
 
   try {
-    // Better Auth behöver hela headers-objektet (inkl. cookies)
-    const session = await auth.api.getSession({
-      headers: event.request.headers,
+    // Försök klona request (fungerar oftast)
+    const clonedRequest = event.request.clone();
+    return await auth.api.getSession({
+      headers: clonedRequest.headers,
     });
-    return session;
   } catch (error) {
-    console.warn('Failed to get session:', error);
-    return null;
+    // Om kloning misslyckas (t.ex. vid server actions), använd headers direkt
+    console.warn(
+      'Request clone failed, falling back to direct headers:',
+      error
+    );
+    try {
+      return await auth.api.getSession({
+        headers: event.request.headers,
+      });
+    } catch (fallbackError) {
+      console.error('Failed to get session:', fallbackError);
+      return null;
+    }
   }
 }
 
@@ -36,13 +47,22 @@ export async function revokeCurrentSession() {
   if (!event) return null;
 
   try {
-    const response = await auth.api.signOut({
-      headers: event.request.headers,
+    const clonedRequest = event.request.clone();
+    return await auth.api.signOut({
+      headers: clonedRequest.headers,
     });
-
-    return response;
   } catch (error) {
-    console.error('Error revoking session:', error);
-    return null;
+    console.warn(
+      'Request clone failed for signOut, falling back to direct headers:',
+      error
+    );
+    try {
+      return await auth.api.signOut({
+        headers: event.request.headers,
+      });
+    } catch (fallbackError) {
+      console.error('Error revoking session:', fallbackError);
+      return null;
+    }
   }
 }
