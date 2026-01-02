@@ -7,27 +7,11 @@ export async function getSession() {
   const event = getRequestEvent();
   if (!event) return null;
 
-  try {
-    // Försök klona request (fungerar oftast)
-    const clonedRequest = event.request.clone();
-    return await auth.api.getSession({
-      headers: clonedRequest.headers,
-    });
-  } catch (error) {
-    // Om kloning misslyckas (t.ex. vid server actions), använd headers direkt
-    console.warn(
-      'Request clone failed, falling back to direct headers:',
-      error
-    );
-    try {
-      return await auth.api.getSession({
-        headers: event.request.headers,
-      });
-    } catch (fallbackError) {
-      console.error('Failed to get session:', fallbackError);
-      return null;
-    }
-  }
+  const clonedRequest = event.request.clone();
+
+  return await auth.api.getSession({
+    headers: clonedRequest.headers,
+  });
 }
 
 export async function requireAuth() {
@@ -39,30 +23,4 @@ export async function requireAuth() {
   }
 
   return session;
-}
-
-export async function revokeCurrentSession() {
-  'use server';
-  const event = getRequestEvent();
-  if (!event) return null;
-
-  try {
-    const clonedRequest = event.request.clone();
-    return await auth.api.signOut({
-      headers: clonedRequest.headers,
-    });
-  } catch (error) {
-    console.warn(
-      'Request clone failed for signOut, falling back to direct headers:',
-      error
-    );
-    try {
-      return await auth.api.signOut({
-        headers: event.request.headers,
-      });
-    } catch (fallbackError) {
-      console.error('Error revoking session:', fallbackError);
-      return null;
-    }
-  }
 }

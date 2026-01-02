@@ -1,5 +1,4 @@
 import { action } from '@solidjs/router';
-import { getSession } from '~/lib/auth-helpers';
 import { prisma } from '~/lib/prisma';
 
 export interface DeleteAccountInput {
@@ -30,11 +29,6 @@ export const deleteAccountAction = action(
     if (!userId) return { success: false, error: 'Unauthorized' };
 
     try {
-      const session = await getSession();
-      if (session?.user?.id !== userId) {
-        return { success: false, error: 'Forbidden' };
-      }
-
       await prisma.user.delete({
         where: { id: userId },
       });
