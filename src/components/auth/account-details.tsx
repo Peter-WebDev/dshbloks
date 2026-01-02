@@ -1,8 +1,7 @@
 import { Separator } from "@kobalte/core/separator";
-import { useAction, useNavigate } from "@solidjs/router";
+import { useNavigate } from "@solidjs/router";
 import { createSignal, Show } from "solid-js";
-import { deleteAccountAction } from "~/lib/actions/account/deleteaccount";
-import { changePassword, signOut, useSession } from "~/lib/auth-client";
+import { changePassword, deleteUser, signOut, useSession } from "~/lib/auth-client";
 import { changePasswordSchema } from "~/lib/validation/schemas";
 import { useZodValidation } from "../../lib/form/use-form-zod";
 import {
@@ -25,8 +24,6 @@ export default function AccountDetails() {
     const [open, setOpen] = createSignal(false);
     const [deleteOpen, setDeleteOpen] = createSignal(false);
     const [isDeleting, setIsDeleting] = createSignal(false);
-
-    const deleteAction = useAction(deleteAccountAction);
 
     const { validateForm, getFieldState, resetForm } = useZodValidation(changePasswordSchema);
 
@@ -83,43 +80,36 @@ export default function AccountDetails() {
 
     const handleConfirmDelete = async () => {
         setIsDeleting(true);
-        const userId = session().data?.user?.id;
-
-        if (!userId) {
-            showToast({
-                title: "Error",
-                description: "User ID not found.",
-                variant: "destructive",
-            });
-            setIsDeleting(false);
-            return;
-        }
 
         try {
-            const result = await deleteAction({ userId });
+            // Vi anropar Better Auths inbyggda deleteUser direkt
+            const { error } = await deleteUser();
 
-            if (result.success) {
-                showToast({
-                    title: "Account deleted",
-                    description: "Your account has been permanently deleted.",
-                    variant: "success",
-                });
-
-                await signOut();
-
-                navigate("/", { replace: true });
-            } else {
+            if (error) {
                 showToast({
                     title: "Error",
-                    description: result.error || "Failed to delete account.",
+                    description: error.message || "Failed to delete account.",
                     variant: "destructive",
                 });
+                return;
             }
-        } catch (error) {
-            console.error("Delete account error:", error);
+
+            // Om lyckat: Toast, logga ut och skicka hem
+            showToast({
+                title: "Account deleted",
+                description: "Your account has been permanently deleted.",
+                variant: "success",
+            });
+
+            // Better Auth rensar oftast sessionen, men en extra signOut skadar inte
+            await signOut();
+
+            navigate("/", { replace: true });
+
+        } catch (err) {
             showToast({
                 title: "Error",
-                description: error instanceof Error ? error.message : "An unexpected error occurred.",
+                description: "An unexpected error occurred.",
                 variant: "destructive",
             });
         } finally {
@@ -231,14 +221,14 @@ export default function AccountDetails() {
                     <AlertDialogContent>
                         <AlertDialogTitle>Delete your account</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently deleted.
+                            Are you sure you want to delete your account? This action is permanent and all your dashboards will be removed.
                         </AlertDialogDescription>
+
                         <div class="flex gap-3 justify-end pt-4">
                             <Button
-                                as={Button}
-                                type="button"
                                 variant="outline"
                                 onClick={() => setDeleteOpen(false)}
+                                disabled={isDeleting()}
                             >
                                 Cancel
                             </Button>
@@ -247,7 +237,7 @@ export default function AccountDetails() {
                                 onClick={handleConfirmDelete}
                                 disabled={isDeleting()}
                             >
-                                {isDeleting() ? "Deleting..." : "Delete account"}
+                                {isDeleting() ? "Deleting..." : "Confirm Delete"}
                             </Button>
                         </div>
                     </AlertDialogContent>
@@ -255,4 +245,4 @@ export default function AccountDetails() {
             </CardFooter>
         </Card>
     );
-};
+}
