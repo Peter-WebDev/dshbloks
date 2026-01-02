@@ -24,7 +24,7 @@ A minimalistic dashboard application with accessible SolidUI components, powered
 
 [Dshbloks](https://dshbloks.popjosef.se/) live at https://dshbloks.popjosef.se/
 
-**⚠️ Production deployment issue:** The deployed version currently has a bug preventing users to sign-in/sign-up and also creating, updating, or deleting widgets. This functionality works correctly when running locally (`npm run dev`) or with Netlify Dev (`netlify dev`), but fails in the Netlify production environment. Guest mode continues to work in all environments.
+**⚠️ Production deployment issue:** The deployed version currently has a bug preventing users to sign-in, sign-up and also creating, updating, or deleting widgets. This functionality works correctly when running locally (`npm run dev`) or with Netlify Dev (`netlify dev`), but fails in the Netlify production environment. Guest mode continues to work in all environments.
 
 This bug seems to be about the way serverless functions handle streams. I was hoping to fix the bug through the architectural refactoring where I separated all Server Actions into isolated modules (/src/lib/actions), but sadly not. Although this ensured that the stream is not prematurely consumed by middleware or adapters, which was a critical lesson for scalable development in a serverless environment.
 
