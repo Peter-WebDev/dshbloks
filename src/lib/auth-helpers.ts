@@ -7,15 +7,16 @@ export async function getSession() {
   const event = getRequestEvent();
   if (!event) return null;
 
-  const clonedRequest = event.request.clone();
-
-  return await auth.api.getSession({
-    headers: clonedRequest.headers,
-  });
+  try {
+    return await auth.api.getSession({
+      headers: event.request.headers,
+    });
+  } catch {
+    return null;
+  }
 }
 
 export async function requireAuth() {
-  'use server';
   const session = await getSession();
 
   if (!session || !session.user) {
