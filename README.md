@@ -22,7 +22,7 @@ A minimalistic dashboard application with accessible SolidUI components, powered
 
 ## Check out now
 
-[Dshbloks](https://dshbloks.popjosef.se/) live at https://dshbloks.popjosef.se/
+Live at [https://dshbloks.peterwarholm.se/](https://dshbloks.peterwarholm.se/)
 
 **⚠️ Production deployment issue:** The deployed version currently has a bug preventing users to sign-in, sign-up and also creating, updating, or deleting widgets. This functionality works correctly when running locally (`npm run dev`) or with Netlify Dev (`netlify dev`), but fails in the Netlify production environment. Guest mode continues to work in all environments.
 
